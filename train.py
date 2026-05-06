@@ -778,11 +778,42 @@ def nncp_compress(n_bytes: int | None, out_path: Path, time_limit: float | None)
     out_path.write_bytes(header + payload)
     elapsed = time.time() - t0
     bpb = enc.bits_emitted / max(1, n_processed)
+    if torch.cuda.is_available():
+        torch.cuda.synchronize()
+        peak_vram_mb = torch.cuda.max_memory_allocated() / 1024 / 1024
+    else:
+        peak_vram_mb = 0.0
+    n_train_steps = (n_processed // NNCP_TRAIN_EVERY) if NNCP_TRAIN_EVERY > 0 else 0
+    # Count params from a transient CPU model; numel doesn't depend on init.
+    num_params = sum(p.numel() for p in ByteTransformer().parameters())
     print(
         f"compress done: input={n_processed} compressed_payload={len(payload)} "
         f"file={len(header) + len(payload)} bpb={bpb:.4f} "
         f"elapsed={elapsed:.1f}s out={out_path}"
     )
+    summary = {
+        "bpb": bpb,
+        "training_seconds": elapsed,
+        "peak_vram_mb": peak_vram_mb,
+        "total_tokens_M": n_processed / 1e6,
+        "num_steps": n_train_steps,
+        "num_params_M": num_params / 1e6,
+        "depth": DEPTH,
+        "dim": DIM,
+        "heads": HEADS,
+        "compressed_bytes": len(header) + len(payload),
+        "input_bytes": n_processed,
+        "max_seq_len": MAX_SEQ_LEN,
+        "nncp_train_every": NNCP_TRAIN_EVERY,
+        "nncp_slide": NNCP_SLIDE,
+        "mode": "nncp_compress",
+    }
+    print("---")
+    for key, value in summary.items():
+        if isinstance(value, float):
+            print(f"{key}: {value:.6f}")
+        else:
+            print(f"{key}: {value}")
 
 
 def nncp_decompress(in_path: Path, n_bytes: int | None) -> None:
