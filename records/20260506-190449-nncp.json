@@ -1,0 +1,13 @@
+{
+  "log": "records/20260506-190449-nncp.log",
+  "bpb": 5.507302,
+  "training_seconds": 1500.562287,
+  "peak_vram_mb": 256.516113,
+  "total_tokens_M": 1.117024,
+  "num_steps": 4363,
+  "num_params_M": 3.483136,
+  "depth": 4,
+  "dim": 256,
+  "heads": 8,
+  "description": "nncp full-file 25min: depth=4 dim=256 heads=8, train_every=256, slide=768, time-limited to 1.12M bytes"
+}

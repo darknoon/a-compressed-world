@@ -1,2 +1,3 @@
 timestamp	bpb	peak_vram_mb	training_seconds	total_tokens_M	num_steps	num_params_M	depth	dim	heads	log	description
 20260506-184353	1.509762	5205.0	300.2	158.9	4850	25.9	8	512	8	records/20260506-184353.log	baseline: depth=8 dim=512 heads=8 ctx=1024, 5min, cross-entropy bpb (no round-trip)
+20260506-190449-nncp	5.507302	256.5	1500.6	1.1	4363	3.5	4	256	8	records/20260506-190449-nncp.log	nncp full-file 25min: depth=4 dim=256 heads=8, train_every=256, slide=768, time-limited to 1.12M bytes
