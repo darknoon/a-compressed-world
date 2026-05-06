@@ -67,6 +67,7 @@ class Header:
     min_zoom: int
     max_zoom: int
     internal_compression: int
+    tile_compression: int
 
 
 def read_header(f: BinaryIO) -> Header:
@@ -84,20 +85,29 @@ def read_header(f: BinaryIO) -> Header:
         leaf_offset=struct.unpack_from("<Q", raw, 40)[0],
         tile_data_offset=struct.unpack_from("<Q", raw, 56)[0],
         internal_compression=raw[97],
+        tile_compression=raw[98],
         min_zoom=raw[100],
         max_zoom=raw[101],
     )
 
 
-def decompress_directory(data: bytes, compression: int) -> bytes:
+def decompress_pmtiles(data: bytes, compression: int) -> bytes:
+    """Apply a PMTiles compression code (1=none, 2=gzip) to a blob.
+
+    Used for both internal directory bytes and tile payloads.
+    """
     if compression == 1:
         return data
     if compression == 2:
         return gzip.decompress(data)
     raise ValueError(
-        f"unsupported PMTiles internal compression code {compression}; "
+        f"unsupported PMTiles compression code {compression}; "
         "this KISS harness currently supports none and gzip"
     )
+
+
+# Backwards-compatible alias for the directory-only callers.
+decompress_directory = decompress_pmtiles
 
 
 def read_varint(data: bytes, pos: int) -> tuple[int, int]:
@@ -208,12 +218,21 @@ def tile_records(pmtiles_path: Path, bbox: tuple[float, float, float, float]) ->
         wanted = selected_tile_ids(header.min_zoom, header.max_zoom, bbox)
         records: list[bytes] = []
         matched_tiles = 0
+        stored_payload_bytes = 0
+        decoded_payload_bytes = 0
         for entry in collect_entries(f, header):
             ids = range(entry.tile_id, entry.tile_id + max(entry.run_length, 1))
             if not any(tid in wanted for tid in ids):
                 continue
             f.seek(header.tile_data_offset + entry.offset)
-            payload = f.read(entry.length)
+            stored = f.read(entry.length)
+            # Strip the per-tile transport compression so the model sees raw
+            # tile bytes (MVT protobuf for tile_type=1) rather than gzipped
+            # near-uniform noise. Without this the byte stream is already
+            # entropy-coded and bpb floors near 8.
+            payload = decompress_pmtiles(stored, header.tile_compression)
+            stored_payload_bytes += len(stored)
+            decoded_payload_bytes += len(payload)
             for tid in ids:
                 if tid in wanted:
                     # Decode is intentionally omitted; the ID in the byte stream is enough for now.
@@ -231,6 +250,9 @@ def tile_records(pmtiles_path: Path, bbox: tuple[float, float, float, float]) ->
         "records": len(records),
         "matched_tiles": matched_tiles,
         "bytes": sum(len(r) for r in records),
+        "tile_compression": header.tile_compression,
+        "stored_payload_bytes": stored_payload_bytes,
+        "decoded_payload_bytes": decoded_payload_bytes,
     }
     return records, metadata
 
