@@ -12,3 +12,6 @@ tools/
 
 *.pt
 *.pth
+
+# NNCP-style compressed artifacts; reproducible from the same seed/config.
+records/compressed*.bin

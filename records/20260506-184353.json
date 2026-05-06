@@ -1,0 +1,13 @@
+{
+  "log": "records/20260506-184353.log",
+  "bpb": 1.509762,
+  "training_seconds": 300.156259,
+  "peak_vram_mb": 5204.95459,
+  "total_tokens_M": 158.9248,
+  "num_steps": 4850,
+  "num_params_M": 25.859072,
+  "depth": 8,
+  "dim": 512,
+  "heads": 8,
+  "description": "baseline: depth=8 dim=512 heads=8 ctx=1024, 5min, cross-entropy bpb (no round-trip)"
+}
