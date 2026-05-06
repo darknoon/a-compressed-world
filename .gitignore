@@ -7,7 +7,8 @@ __pycache__/
 data/raw/
 data/processed/
 runs/
-tools/go-pmtiles.tar.gz
+tools/
+
 
 *.pt
 *.pth
