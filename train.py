@@ -11,12 +11,15 @@ from __future__ import annotations
 import argparse
 import os
 import time
+from pathlib import Path
 
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
 from prepare import MAX_SEQ_LEN, TIME_BUDGET, VOCAB_SIZE, evaluate_bpb, make_dataloader
+
+CHECKPOINT_PATH = Path(os.environ.get("ACW_CHECKPOINT", "records/checkpoint.pt"))
 
 # ---------------------------------------------------------------------------
 # Hyperparameters. This is the first place agents should try small changes.
@@ -186,6 +189,25 @@ def main() -> None:
             print(f"{key}: {value:.6f}")
         else:
             print(f"{key}: {value}")
+
+    CHECKPOINT_PATH.parent.mkdir(parents=True, exist_ok=True)
+    torch.save(
+        {
+            "state_dict": raw_model.state_dict(),
+            "config": {
+                "depth": DEPTH,
+                "dim": DIM,
+                "heads": HEADS,
+                "mlp_mult": MLP_MULT,
+                "dropout": DROPOUT,
+                "vocab_size": VOCAB_SIZE,
+                "max_seq_len": MAX_SEQ_LEN,
+            },
+            "summary": summary,
+        },
+        CHECKPOINT_PATH,
+    )
+    print(f"checkpoint: {CHECKPOINT_PATH}")
 
 
 if __name__ == "__main__":

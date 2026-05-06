@@ -83,6 +83,10 @@ Point an agent at `program.md`. The intended loop is:
 4. Run `train.py` into a timestamped log under `records/`, then record it with `record.py`.
 5. Keep changes that improve `bpb` enough to justify their complexity.
 
+## Reference
+
+https://bellard.org/nncp/
+
 ## What To Improve Next
 
 - Add a real range coder so checkpoints can produce actual lossless compressed artifacts,
