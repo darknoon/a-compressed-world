@@ -1,0 +1,13 @@
+.venv/
+__pycache__/
+*.py[cod]
+.ruff_cache/
+.pytest_cache/
+
+data/raw/
+data/processed/
+runs/
+tools/go-pmtiles.tar.gz
+
+*.pt
+*.pth

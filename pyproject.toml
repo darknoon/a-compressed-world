@@ -1,0 +1,14 @@
+[project]
+name = "a-compressed-world"
+version = "0.1.0"
+description = "Research loop for transformer-based lossless modeling of PMTiles data."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "numpy>=2.0.0",
+    "torch>=2.4.0",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
