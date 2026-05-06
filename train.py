@@ -49,6 +49,10 @@ COMPILE = os.environ.get("ACW_COMPILE", "1") == "1"
 NNCP_TRAIN_EVERY = int(os.environ.get("ACW_NNCP_TRAIN_EVERY", "64"))
 NNCP_TRAIN_BATCH = int(os.environ.get("ACW_NNCP_TRAIN_BATCH", "8"))
 NNCP_TRAIN_SEQ = int(os.environ.get("ACW_NNCP_TRAIN_SEQ", "256"))
+# Slide the KV-cache window by this many bytes whenever the cache reaches
+# MAX_SEQ_LEN. Smaller values keep more recent context but pay a re-prefill
+# more often (each re-prefill costs O(MAX_SEQ_LEN^2)).
+NNCP_SLIDE = int(os.environ.get("ACW_NNCP_SLIDE", "256"))
 
 
 class CausalSelfAttention(nn.Module):
@@ -69,6 +73,31 @@ class CausalSelfAttention(nn.Module):
         y = F.scaled_dot_product_attention(q, k, v, is_causal=True)
         return self.proj(y.transpose(1, 2).contiguous().view(b, t, c))
 
+    def step(
+        self,
+        x: torch.Tensor,
+        past_kv: tuple[torch.Tensor, torch.Tensor] | None,
+    ) -> tuple[torch.Tensor, tuple[torch.Tensor, torch.Tensor]]:
+        """Cache-aware forward. `past_kv` is the running (k, v); returns (out, new_kv)."""
+        b, t, c = x.shape
+        q, k, v = self.qkv(x).split(c, dim=-1)
+        q = q.view(b, t, self.heads, self.head_dim).transpose(1, 2)
+        k = k.view(b, t, self.heads, self.head_dim).transpose(1, 2)
+        v = v.view(b, t, self.heads, self.head_dim).transpose(1, 2)
+        if past_kv is not None:
+            past_k, past_v = past_kv
+            k = torch.cat([past_k, k], dim=2)
+            v = torch.cat([past_v, v], dim=2)
+            # Single new query attends to all cached keys; no causal mask needed
+            # since each query position only sees the past plus itself, and the
+            # extend path is invoked one token at a time.
+            assert t == 1, "step extend mode requires single-token batch"
+            y = F.scaled_dot_product_attention(q, k, v, is_causal=False)
+        else:
+            # Pure prefill: standard causal attention over the new tokens.
+            y = F.scaled_dot_product_attention(q, k, v, is_causal=True)
+        return self.proj(y.transpose(1, 2).contiguous().view(b, t, c)), (k, v)
+
 
 class Block(nn.Module):
     def __init__(self, dim: int, heads: int):
@@ -86,6 +115,16 @@ class Block(nn.Module):
         x = x + self.attn(self.attn_norm(x))
         x = x + self.mlp(self.mlp_norm(x))
         return x
+
+    def step(
+        self,
+        x: torch.Tensor,
+        past_kv: tuple[torch.Tensor, torch.Tensor] | None,
+    ) -> tuple[torch.Tensor, tuple[torch.Tensor, torch.Tensor]]:
+        attn_out, new_kv = self.attn.step(self.attn_norm(x), past_kv=past_kv)
+        x = x + attn_out
+        x = x + self.mlp(self.mlp_norm(x))
+        return x, new_kv
 
 
 class ByteTransformer(nn.Module):
@@ -120,6 +159,31 @@ class ByteTransformer(nn.Module):
         if y is None:
             return logits
         return F.cross_entropy(logits.view(-1, VOCAB_SIZE), y.view(-1), reduction=reduction)
+
+    def step(
+        self,
+        tokens: torch.Tensor,
+        past_kvs: list[tuple[torch.Tensor, torch.Tensor] | None],
+        pos_offset: int,
+    ) -> tuple[torch.Tensor, list[tuple[torch.Tensor, torch.Tensor]]]:
+        """Run a forward pass that appends `tokens` to the per-layer KV cache.
+
+        `tokens` shape (1, t). `pos_offset` is the absolute position of tokens[0]
+        in the current sliding window (so pos_offset + t <= MAX_SEQ_LEN).
+        Returns (logits, new_kvs).
+        """
+        _, t = tokens.shape
+        assert pos_offset + t <= MAX_SEQ_LEN, (
+            f"position {pos_offset + t} exceeds pos_emb table {MAX_SEQ_LEN}"
+        )
+        pos = torch.arange(pos_offset, pos_offset + t, device=tokens.device)
+        h = self.tok_emb(tokens) + self.pos_emb(pos)
+        new_kvs: list[tuple[torch.Tensor, torch.Tensor]] = []
+        for block, past_kv in zip(self.blocks, past_kvs):
+            h, new_kv = block.step(h, past_kv=past_kv)
+            new_kvs.append(new_kv)
+        logits = self.head(self.norm(h))
+        return logits, new_kvs
 
 
 def count_params(model: nn.Module) -> int:
@@ -445,21 +509,105 @@ def _nncp_setup_model() -> tuple[ByteTransformer, torch.optim.Optimizer]:
     return model, opt
 
 
-@torch.no_grad()
-def _nncp_predict(model: ByteTransformer, ctx: list[int]) -> np.ndarray:
-    """Return (256,) float64 probabilities for the next byte given context.
+class KVCache:
+    """Per-layer KV cache for incremental decoding."""
 
-    Uses a uniform prior when ctx is empty.
+    def __init__(self, n_layers: int) -> None:
+        self.past_kvs: list[tuple[torch.Tensor, torch.Tensor] | None] = [None] * n_layers
+        # window_start: absolute byte index that maps to logical position 0 in cache.
+        self.window_start = 0
+        # size: number of tokens currently cached (logical positions 0..size-1).
+        self.size = 0
+
+    def reset(self, window_start: int) -> None:
+        for i in range(len(self.past_kvs)):
+            self.past_kvs[i] = None
+        self.window_start = window_start
+        self.size = 0
+
+
+@torch.no_grad()
+def _nncp_extend(model: ByteTransformer, byte_id: int, cache: KVCache) -> np.ndarray:
+    """Append one byte to the cache and return softmax probs at the new position.
+
+    Caller must have ensured `cache.size + 1 <= MAX_SEQ_LEN`.
     """
-    if len(ctx) == 0:
-        return np.full(VOCAB_SIZE, 1.0 / VOCAB_SIZE, dtype=np.float64)
     model.eval()
-    # Cap to MAX_SEQ_LEN tokens of context.
-    ctx_t = torch.tensor(ctx[-MAX_SEQ_LEN:], dtype=torch.long, device="cuda").unsqueeze(0)
-    logits = model(ctx_t)  # (1, t, V)
-    last = logits[0, -1].float()
-    probs = F.softmax(last, dim=-1).double().cpu().numpy()
+    tokens = torch.tensor([[byte_id]], dtype=torch.long, device="cuda")
+    logits, new_kvs = model.step(tokens, cache.past_kvs, pos_offset=cache.size)
+    cache.past_kvs = new_kvs
+    cache.size += 1
+    probs = F.softmax(logits[0, -1].float(), dim=-1).double().cpu().numpy()
     return probs
+
+
+@torch.no_grad()
+def _nncp_prefill(
+    model: ByteTransformer, bytes_seq: np.ndarray, cache: KVCache, window_start: int
+) -> np.ndarray | None:
+    """Reset the cache and prefill it with `bytes_seq` starting at `window_start`.
+
+    Returns probs at the last position if `bytes_seq` is non-empty, else None.
+    `len(bytes_seq) <= MAX_SEQ_LEN` must hold.
+    """
+    cache.reset(window_start)
+    if len(bytes_seq) == 0:
+        return None
+    assert len(bytes_seq) <= MAX_SEQ_LEN
+    model.eval()
+    tokens = torch.from_numpy(bytes_seq.astype(np.int64)).unsqueeze(0).cuda()
+    logits, new_kvs = model.step(tokens, cache.past_kvs, pos_offset=0)
+    cache.past_kvs = new_kvs
+    cache.size = tokens.size(1)
+    probs = F.softmax(logits[0, -1].float(), dim=-1).double().cpu().numpy()
+    return probs
+
+
+def _ensure_capacity(
+    model: ByteTransformer,
+    seen: np.ndarray,
+    n_seen: int,
+    cache: KVCache,
+) -> bool:
+    """Make sure the cache has room to extend with byte seen[n_seen - 1].
+
+    After this call, the cache holds bytes [window_start..n_seen - 2]; the
+    caller's subsequent _nncp_extend with seen[n_seen - 1] will bring the
+    cache to [window_start..n_seen - 1] and produce probs for byte n_seen.
+    Returns True if a re-prefill happened.
+    """
+    if cache.size + 1 <= MAX_SEQ_LEN:
+        return False
+    new_start = cache.window_start + NNCP_SLIDE
+    # We must leave room for the upcoming extend (one more token), and
+    # prefill_seq must cover bytes [new_start..n_seen - 2]. Clamp so the
+    # prefill range is non-negative and fits.
+    new_start = min(new_start, n_seen - 1)
+    new_start = max(new_start, 0)
+    prefill_seq = seen[new_start : n_seen - 1]
+    _nncp_prefill(model, prefill_seq, cache, new_start)
+    return True
+
+
+def _refresh_after_train(
+    model: ByteTransformer,
+    seen: np.ndarray,
+    n_seen: int,
+    cache: KVCache,
+) -> np.ndarray | None:
+    """Rebuild the cache from scratch after a training step changed the weights.
+
+    The cache's window_start is preserved if possible, but capped so that
+    prefill_seq fits in MAX_SEQ_LEN. Returns probs at the new last position,
+    which is the prediction for byte n_seen.
+    """
+    # Choose a window start that mirrors what the next extend would need.
+    desired_start = max(0, n_seen - (MAX_SEQ_LEN - 1))
+    # If the previous window already started later (we already slid), keep that.
+    new_start = max(cache.window_start, desired_start)
+    new_start = min(new_start, n_seen)
+    prefill_seq = seen[new_start:n_seen]
+    return _nncp_prefill(model, prefill_seq, cache, new_start)
 
 
 def _nncp_train_step(
@@ -502,60 +650,137 @@ def _open_data(n_bytes: int | None) -> np.ndarray:
     return data
 
 
-def nncp_compress(n_bytes: int | None, out_path: Path) -> None:
-    """Encode the first `n_bytes` of data.bin to `out_path`."""
-    data = _open_data(n_bytes)
-    n = len(data)
-    print(f"nncp compress: bytes={n} model dim={DIM} depth={DEPTH} heads={HEADS}")
+UNIFORM_PRIOR = np.full(VOCAB_SIZE, 1.0 / VOCAB_SIZE, dtype=np.float64)
+
+
+def _nncp_loop(
+    mode: str,
+    n: int,
+    data: np.ndarray | None,
+    enc: ArithmeticEncoder | None,
+    dec: ArithmeticDecoder | None,
+    time_limit: float | None,
+) -> tuple[int, np.ndarray]:
+    """Shared NNCP-style online encode/decode loop.
+
+    Returns (bytes_processed, seen_buffer). For mode='compress' the encoder
+    side accumulates bits into `enc`; for mode='decompress' the decoder reads
+    from `dec` and the loop fills `seen` with the recovered bytes.
+    """
+    assert mode in ("compress", "decompress")
     model, opt = _nncp_setup_model()
     print(f"num_params_M: {count_params(model) / 1e6:.6f}")
+    print(
+        f"nncp {mode}: bytes={n} ctx={MAX_SEQ_LEN} slide={NNCP_SLIDE} "
+        f"train_every={NNCP_TRAIN_EVERY} train_batch={NNCP_TRAIN_BATCH} "
+        f"train_seq={NNCP_TRAIN_SEQ}"
+    )
 
     seen = np.empty(n, dtype=np.uint8)
     n_seen = 0
-
-    writer = BitWriter()
-    enc = ArithmeticEncoder(writer)
+    cache = KVCache(DEPTH)
     train_rng = np.random.default_rng(1337)
+
+    # `probs` holds the prediction for the byte we are about to encode/decode.
+    probs = UNIFORM_PRIOR
 
     t0 = time.time()
     last_print = 0
+    bits_at_last_print = 0
+    bytes_at_last_print = 0
     for i in range(n):
-        b = int(data[i])
-        # Build context as the suffix of seen[:n_seen] (already a bounded slice).
-        lo = max(0, n_seen - MAX_SEQ_LEN)
-        ctx = seen[lo:n_seen].tolist()
-        probs = _nncp_predict(model, ctx)
-        freqs = quantize_probs(probs.astype(np.float32))
-        cum = freqs_to_cum(freqs)
-        enc.encode_symbol(int(cum[b]), int(cum[b + 1]), TOTAL_FREQ)
+        if time_limit is not None and time.time() - t0 > time_limit:
+            print(f"time limit {time_limit:.1f}s reached at byte {i}; stopping")
+            break
+
+        # Use `probs` to encode/decode byte i.
+        if mode == "compress":
+            assert data is not None and enc is not None
+            b = int(data[i])
+            freqs = quantize_probs(probs.astype(np.float32))
+            cum = freqs_to_cum(freqs)
+            enc.encode_symbol(int(cum[b]), int(cum[b + 1]), TOTAL_FREQ)
+        else:
+            assert dec is not None
+            freqs = quantize_probs(probs.astype(np.float32))
+            cum = freqs_to_cum(freqs)
+            target = dec.decode_target(TOTAL_FREQ)
+            b = find_symbol(cum, target)
+            dec.update(int(cum[b]), int(cum[b + 1]), TOTAL_FREQ)
+
         seen[n_seen] = b
         n_seen += 1
 
+        # Periodic training step. Must happen at the same point on both sides.
+        trained = False
         if NNCP_TRAIN_EVERY > 0 and n_seen % NNCP_TRAIN_EVERY == 0:
             _nncp_train_step(
                 model, opt, seen, n_seen, train_rng, NNCP_TRAIN_SEQ, NNCP_TRAIN_BATCH
             )
+            trained = True
+
+        # Now produce the prediction for byte n_seen (next iteration).
+        if n_seen >= n:
+            break  # nothing more to predict
+        if trained:
+            # Weights changed, KV cache is stale: rebuild from the most recent
+            # MAX_SEQ_LEN bytes and read the prediction off the prefill output.
+            new_probs = _refresh_after_train(model, seen, n_seen, cache)
+            probs = new_probs if new_probs is not None else UNIFORM_PRIOR
+        else:
+            # Make sure the cache has room to extend by one more token; if
+            # full, slide the window forward and re-prefill the prefix
+            # [new_start..n_seen - 2]. Either way, we extend with the latest
+            # observed byte to get the prediction for byte n_seen.
+            _ensure_capacity(model, seen, n_seen, cache)
+            probs = _nncp_extend(model, int(seen[n_seen - 1]), cache)
 
         if n_seen - last_print >= 1024 or n_seen == n:
             elapsed = time.time() - t0
-            bits = enc.bits_emitted
-            bpb = bits / n_seen
-            print(
-                f"step {n_seen} bytes {n_seen} bits {bits} bpb {bpb:.4f} "
-                f"elapsed {elapsed:.1f}s"
-            )
+            if mode == "compress":
+                assert enc is not None
+                bits = enc.bits_emitted
+                bpb = bits / n_seen
+                window = max(1, n_seen - bytes_at_last_print)
+                window_bits = bits - bits_at_last_print
+                window_bpb = window_bits / window
+                print(
+                    f"step {n_seen} bytes {n_seen} bits {bits} bpb {bpb:.4f} "
+                    f"window_bpb {window_bpb:.4f} elapsed {elapsed:.1f}s"
+                )
+                bits_at_last_print = bits
+            else:
+                print(f"decode {n_seen}/{n} elapsed {elapsed:.1f}s")
+            bytes_at_last_print = n_seen
             last_print = n_seen
 
+    return n_seen, seen
+
+
+def nncp_compress(n_bytes: int | None, out_path: Path, time_limit: float | None) -> None:
+    """Encode the first `n_bytes` of data.bin to `out_path`."""
+    data = _open_data(n_bytes)
+    n = len(data)
+    print(f"nncp compress: input bytes={n} model dim={DIM} depth={DEPTH} heads={HEADS}")
+
+    writer = BitWriter()
+    enc = ArithmeticEncoder(writer)
+
+    t0 = time.time()
+    n_processed, _ = _nncp_loop(
+        "compress", n, data=data, enc=enc, dec=None, time_limit=time_limit
+    )
     enc.finish()
     payload = writer.finish()
     out_path.parent.mkdir(parents=True, exist_ok=True)
-    # Header: magic(4) + n_bytes(u64le)
-    header = b"ACWC" + struct.pack("<Q", n)
+    # Header: magic(4) + n_bytes(u64le).
+    header = b"ACWC" + struct.pack("<Q", n_processed)
     out_path.write_bytes(header + payload)
     elapsed = time.time() - t0
+    bpb = enc.bits_emitted / max(1, n_processed)
     print(
-        f"compress done: input={n} compressed_payload={len(payload)} "
-        f"file={len(header) + len(payload)} bpb={enc.bits_emitted / n:.4f} "
+        f"compress done: input={n_processed} compressed_payload={len(payload)} "
+        f"file={len(header) + len(payload)} bpb={bpb:.4f} "
         f"elapsed={elapsed:.1f}s out={out_path}"
     )
 
@@ -578,50 +803,22 @@ def nncp_decompress(in_path: Path, n_bytes: int | None) -> None:
     truth = _open_data(n)
     assert len(truth) == n, f"truth length {len(truth)} != declared {n}"
 
-    model, opt = _nncp_setup_model()
-    print(f"num_params_M: {count_params(model) / 1e6:.6f}")
-
     reader = BitReader(payload)
     dec = ArithmeticDecoder(reader)
 
-    seen = np.empty(n, dtype=np.uint8)
-    n_seen = 0
-    train_rng = np.random.default_rng(1337)
-
     t0 = time.time()
-    last_print = 0
-    out = bytearray()
-    for i in range(n):
-        lo = max(0, n_seen - MAX_SEQ_LEN)
-        ctx = seen[lo:n_seen].tolist()
-        probs = _nncp_predict(model, ctx)
-        freqs = quantize_probs(probs.astype(np.float32))
-        cum = freqs_to_cum(freqs)
-        target = dec.decode_target(TOTAL_FREQ)
-        sym = find_symbol(cum, target)
-        dec.update(int(cum[sym]), int(cum[sym + 1]), TOTAL_FREQ)
-        # Sanity check against truth (which we have here for validation).
-        if sym != int(truth[i]):
-            raise AssertionError(
-                f"mismatch at byte {i}: decoded={sym} truth={int(truth[i])}"
-            )
-        out.append(sym)
-        seen[n_seen] = sym
-        n_seen += 1
-
-        if NNCP_TRAIN_EVERY > 0 and n_seen % NNCP_TRAIN_EVERY == 0:
-            _nncp_train_step(
-                model, opt, seen, n_seen, train_rng, NNCP_TRAIN_SEQ, NNCP_TRAIN_BATCH
-            )
-
-        if n_seen - last_print >= 1024 or n_seen == n:
-            elapsed = time.time() - t0
-            print(f"decode {n_seen}/{n} elapsed {elapsed:.1f}s")
-            last_print = n_seen
-
-    decoded = bytes(out)
-    assert decoded == truth.tobytes(), "decoded bytes do not match data.bin"
-    print(f"decompress done: bytes={n} round-trip OK elapsed={time.time() - t0:.1f}s")
+    n_processed, seen = _nncp_loop(
+        "decompress", n, data=None, enc=None, dec=dec, time_limit=None
+    )
+    decoded = seen[:n_processed].tobytes()
+    if decoded != truth[:n_processed].tobytes():
+        # Find first mismatch for diagnostic.
+        diffs = np.where(seen[:n_processed] != truth[:n_processed])[0]
+        first = int(diffs[0]) if len(diffs) else -1
+        raise AssertionError(
+            f"decoded bytes do not match data.bin (first mismatch at byte {first})"
+        )
+    print(f"decompress done: bytes={n_processed} round-trip OK elapsed={time.time() - t0:.1f}s")
 
 
 # ===========================================================================
@@ -658,6 +855,12 @@ def main() -> None:
         default=COMPRESSED_PATH,
         help=f"Output artifact path for --compress (default: {COMPRESSED_PATH})",
     )
+    parser.add_argument(
+        "--time-limit",
+        type=float,
+        default=None,
+        help="Wall-clock seconds before --compress bails out and writes a partial artifact",
+    )
     args = parser.parse_args()
 
     if args.self_test:
@@ -666,7 +869,7 @@ def main() -> None:
 
     if args.compress:
         assert torch.cuda.is_available(), "compress requires CUDA"
-        nncp_compress(args.n_bytes, args.out)
+        nncp_compress(args.n_bytes, args.out, args.time_limit)
         return
 
     if args.decompress is not None:
