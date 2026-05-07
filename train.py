@@ -53,16 +53,67 @@ NNCP_TRAIN_SEQ = int(os.environ.get("ACW_NNCP_TRAIN_SEQ", "256"))
 # MAX_SEQ_LEN. Smaller values keep more recent context but pay a re-prefill
 # more often (each re-prefill costs O(MAX_SEQ_LEN^2)).
 NNCP_SLIDE = int(os.environ.get("ACW_NNCP_SLIDE", "256"))
+# Mixed attention: 0 disables. >0 makes every layer use sliding-window
+# causal attention with this window size, except those listed in
+# ACW_FULL_LAYER_INDICES (comma-separated). Modeled after modded-nanogpt's
+# "mostly local with a few full" pattern. Default full indices are the
+# first and last layer when LOCAL_WINDOW > 0.
+LOCAL_WINDOW = int(os.environ.get("ACW_LOCAL_WINDOW", "0"))
+
+
+def _parse_full_layer_indices() -> set[int]:
+    raw = os.environ.get("ACW_FULL_LAYER_INDICES")
+    if raw is None:
+        if LOCAL_WINDOW <= 0 or DEPTH <= 1:
+            return set()
+        # Default: first + last layer are full attention.
+        return {0, DEPTH - 1}
+    raw = raw.strip()
+    if not raw:
+        return set()
+    return {int(part) for part in raw.split(",")}
+
+
+FULL_LAYER_INDICES = _parse_full_layer_indices()
+
+
+def _windowed_causal_mask(t: int, window: int, device: torch.device) -> torch.Tensor:
+    """(t, t) bool mask: True at (i, j) iff j <= i and i - j < window."""
+    i = torch.arange(t, device=device).unsqueeze(1)
+    j = torch.arange(t, device=device).unsqueeze(0)
+    return (j <= i) & (j > i - window)
 
 
 class CausalSelfAttention(nn.Module):
-    def __init__(self, dim: int, heads: int):
+    def __init__(self, dim: int, heads: int, window_size: int | None = None):
         super().__init__()
         assert dim % heads == 0
         self.heads = heads
         self.head_dim = dim // heads
         self.qkv = nn.Linear(dim, 3 * dim, bias=False)
         self.proj = nn.Linear(dim, dim, bias=False)
+        # window_size: None or 0 means full causal attention; otherwise the
+        # query at position i attends only to keys [max(0, i - W + 1), i].
+        self.window_size = window_size if window_size and window_size > 0 else None
+
+    def _attend(self, q: torch.Tensor, k: torch.Tensor, v: torch.Tensor) -> torch.Tensor:
+        # q is over t_q new tokens; k/v cover t_kv >= t_q tokens (ending at
+        # the same final position as q). Used by both `forward` (prefill) and
+        # `step` (extend, where t_q == 1 and t_kv may include cached keys).
+        t_q = q.size(2)
+        t_kv = k.size(2)
+        if self.window_size is None:
+            if t_q == t_kv:
+                return F.scaled_dot_product_attention(q, k, v, is_causal=True)
+            # extend path: one query against past + self, no further mask.
+            return F.scaled_dot_product_attention(q, k, v, is_causal=False)
+        # Windowed: queries at positions [t_kv - t_q .. t_kv - 1] each attend
+        # to keys at positions [max(0, qpos - W + 1) .. qpos].
+        device = q.device
+        i = torch.arange(t_kv - t_q, t_kv, device=device).unsqueeze(1)  # (t_q, 1)
+        j = torch.arange(t_kv, device=device).unsqueeze(0)  # (1, t_kv)
+        mask = (j <= i) & (j > i - self.window_size)
+        return F.scaled_dot_product_attention(q, k, v, attn_mask=mask, is_causal=False)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         b, t, c = x.shape
@@ -70,7 +121,7 @@ class CausalSelfAttention(nn.Module):
         q = q.view(b, t, self.heads, self.head_dim).transpose(1, 2)
         k = k.view(b, t, self.heads, self.head_dim).transpose(1, 2)
         v = v.view(b, t, self.heads, self.head_dim).transpose(1, 2)
-        y = F.scaled_dot_product_attention(q, k, v, is_causal=True)
+        y = self._attend(q, k, v)
         return self.proj(y.transpose(1, 2).contiguous().view(b, t, c))
 
     def step(
@@ -88,22 +139,23 @@ class CausalSelfAttention(nn.Module):
             past_k, past_v = past_kv
             k = torch.cat([past_k, k], dim=2)
             v = torch.cat([past_v, v], dim=2)
-            # Single new query attends to all cached keys; no causal mask needed
-            # since each query position only sees the past plus itself, and the
-            # extend path is invoked one token at a time.
+            # Local layers cap the cache at their window; full layers grow up
+            # to MAX_SEQ_LEN (and the slide logic in the NNCP loop refills).
+            if self.window_size is not None and k.size(2) > self.window_size:
+                k = k[:, :, -self.window_size :, :]
+                v = v[:, :, -self.window_size :, :]
             assert t == 1, "step extend mode requires single-token batch"
             y = F.scaled_dot_product_attention(q, k, v, is_causal=False)
         else:
-            # Pure prefill: standard causal attention over the new tokens.
-            y = F.scaled_dot_product_attention(q, k, v, is_causal=True)
+            y = self._attend(q, k, v)
         return self.proj(y.transpose(1, 2).contiguous().view(b, t, c)), (k, v)
 
 
 class Block(nn.Module):
-    def __init__(self, dim: int, heads: int):
+    def __init__(self, dim: int, heads: int, window_size: int | None = None):
         super().__init__()
         self.attn_norm = nn.LayerNorm(dim)
-        self.attn = CausalSelfAttention(dim, heads)
+        self.attn = CausalSelfAttention(dim, heads, window_size=window_size)
         self.mlp_norm = nn.LayerNorm(dim)
         self.mlp = nn.Sequential(
             nn.Linear(dim, MLP_MULT * dim),
@@ -133,7 +185,15 @@ class ByteTransformer(nn.Module):
         self.tok_emb = nn.Embedding(VOCAB_SIZE, DIM)
         self.pos_emb = nn.Embedding(MAX_SEQ_LEN, DIM)
         self.drop = nn.Dropout(DROPOUT)
-        self.blocks = nn.ModuleList([Block(DIM, HEADS) for _ in range(DEPTH)])
+        block_windows: list[int | None] = []
+        for layer_idx in range(DEPTH):
+            if LOCAL_WINDOW > 0 and layer_idx not in FULL_LAYER_INDICES:
+                block_windows.append(LOCAL_WINDOW)
+            else:
+                block_windows.append(None)
+        self.blocks = nn.ModuleList(
+            [Block(DIM, HEADS, window_size=block_windows[i]) for i in range(DEPTH)]
+        )
         self.norm = nn.LayerNorm(DIM)
         self.head = nn.Linear(DIM, VOCAB_SIZE, bias=False)
         self.head.weight = self.tok_emb.weight
@@ -673,7 +733,8 @@ def _nncp_loop(
     print(
         f"nncp {mode}: bytes={n} ctx={MAX_SEQ_LEN} slide={NNCP_SLIDE} "
         f"train_every={NNCP_TRAIN_EVERY} train_batch={NNCP_TRAIN_BATCH} "
-        f"train_seq={NNCP_TRAIN_SEQ}"
+        f"train_seq={NNCP_TRAIN_SEQ} local_window={LOCAL_WINDOW or 0} "
+        f"full_layers={sorted(FULL_LAYER_INDICES) if LOCAL_WINDOW > 0 else 'all'}"
     )
 
     seen = np.empty(n, dtype=np.uint8)
@@ -806,6 +867,8 @@ def nncp_compress(n_bytes: int | None, out_path: Path, time_limit: float | None)
         "max_seq_len": MAX_SEQ_LEN,
         "nncp_train_every": NNCP_TRAIN_EVERY,
         "nncp_slide": NNCP_SLIDE,
+        "local_window": LOCAL_WINDOW,
+        "full_layer_indices": ",".join(str(i) for i in sorted(FULL_LAYER_INDICES)),
         "mode": "nncp_compress",
     }
     print("---")
