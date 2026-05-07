@@ -1,0 +1,294 @@
+# record 25 tile_id=1269266481 z=15 x=17061 y=11947 bytes=1,550
+      0  1aba02                    #3 LEN layers len=314 -> Layer(15 fields)
+      3  0a09                        #1 LEN name len=9 -> string("buildings")
+      5  6275696c64696e6773                    
+     14  1268                        #2 LEN feature len=104 -> Feature(4 fields)
+     16  0892a6f3cb808008              #1 VARINT id = varint(35184531264274)
+     24  1204                          #2 LEN tags len=4 -> packed([0, 0, 1, 1])
+     26  00000101                                
+     30  1803                          #3 VARINT type = varint(3)
+     32  2256                          #4 LEN geometry len=86 -> packed(77 ints: [9, 282, 127, 290, 84, 134, ..., 22, 29, 15])
+     34  099a027fa202548601262f4e1b280a14        
+     50  1e002020061a16082a0d224e50320120        
+     66  1a00243e0130061e26082a0f24191e2b        
+       ... 38 more payload bytes ...
+    120  121f                        #2 LEN feature len=31 -> Feature(4 fields)
+    122  0889d0b1ec818008              #1 VARINT id = varint(35184867829769)
+    130  1204                          #2 LEN tags len=4 -> packed([0, 0, 1, 1])
+    132  00000101                                
+    136  1803                          #3 VARINT type = varint(3)
+    138  220d                          #4 LEN geometry len=13 -> packed([9, 1176, 168, 26, 56, 9, 8, 44, 55, 10, 15])
+    140  099809a8011a3809082c370a0f              
+    153  121f                        #2 LEN feature len=31 -> Feature(4 fields)
+    155  088ad0b1ec818008              #1 VARINT id = varint(35184867829770)
+    163  1204                          #2 LEN tags len=4 -> packed([0, 0, 1, 1])
+    165  00000101                                
+    169  1803                          #3 VARINT type = varint(3)
+    171  220d                          #4 LEN geometry len=13 -> packed([9, 1050, 190, 26, 58, 9, 8, 48, 57, 10, 15])
+    173  099a08be011a3a090830390a0f              
+    186  121e                        #2 LEN feature len=30 -> Feature(4 fields)
+    188  088cd0b1ec818008              #1 VARINT id = varint(35184867829772)
+    196  1204                          #2 LEN tags len=4 -> packed([0, 0, 1, 1])
+    198  00000101                                
+    202  1803                          #3 VARINT type = varint(3)
+    204  220c                          #4 LEN geometry len=12 -> packed([9, 1242, 127, 26, 8, 44, 79, 16, 9, 59, 15])
+    206  09da097f1a082c4f10093b0f                
+    218  1217                        #2 LEN feature len=23 -> Feature(4 fields)
+    220  08ddadb8f4888004              #1 VARINT id = varint(17594577721053)
+    228  1204                          #2 LEN tags len=4 -> packed([2, 2, 1, 3])
+    230  02020103                                
+    234  1801                          #3 VARINT type = varint(1)
+    236  2205                          #4 LEN geometry len=5 -> packed([9, 616, 256])
+    238  09e8048002                              
+    243  1a09                        #3 LEN key len=9 -> string("sort_rank")
+    245  736f72745f72616e6b                    
+    254  1a04                        #3 LEN key len=4 -> string("kind")
+    256  6b696e64                              
+    260  1a10                        #3 LEN key len=16 -> string("addr_housenumber")
+    262  616464725f686f7573656e756d626572      
+    278  2203                        #4 LEN value len=3 -> Value(1 fields)
+    280  30a006                        #6 VARINT sint_value = varint(800)
+    283  220a                        #4 LEN value len=10 -> Value(1 fields)
+    285  0a08                          #1 LEN string_value len=8 -> bytes(8)
+    287  6275696c64696e67                        
+    295  2204                        #4 LEN value len=4 -> Value(1 fields)
+    297  0a02                          #1 LEN string_value len=2 -> bytes(2)
+    299  3236                                    
+    301  2209                        #4 LEN value len=9 -> Value(1 fields)
+    303  0a07                          #1 LEN string_value len=7 -> bytes(7)
+    305  61646472657373                          
+    312  288020                      #5 VARINT extent = varint(4096)
+    315  7802                        #15 VARINT version = varint(2)
+    317  1a65                      #3 LEN layers len=101 -> Layer(6 fields)
+    319  0a05                        #1 LEN name len=5 -> string("earth")
+    321  6561727468                            
+    326  1248                        #2 LEN feature len=72 -> Feature(4 fields)
+    328  0801                          #1 VARINT id = varint(1)
+    330  1202                          #2 LEN tags len=2 -> packed([0, 0])
+    332  0000                                    
+    334  1803                          #3 VARINT type = varint(3)
+    336  223e                          #4 LEN geometry len=62 -> packed(43 ints: [9, 1368, 255, 154, 30, 146, ..., 0, 835, 15])
+    338  09d80aff019a011e92012678306e3aa4        
+    354  022cba0127860191017e8f016095013a        
+    370  e501469b01207b0cb9010f8b011f9f01        
+       ... 14 more payload bytes ...
+    400  1a04                        #3 LEN key len=4 -> string("kind")
+    402  6b696e64                              
+    406  2207                        #4 LEN value len=7 -> Value(1 fields)
+    408  0a05                          #1 LEN string_value len=5 -> bytes(5)
+    410  6561727468                              
+    415  288020                      #5 VARINT extent = varint(4096)
+    418  7802                        #15 VARINT version = varint(2)
+    420  1af501                    #3 LEN layers len=245 -> Layer(10 fields)
+    423  0a07                        #1 LEN name len=7 -> string("landuse")
+    425  6c616e64757365                        
+    432  1242                        #2 LEN feature len=66 -> Feature(4 fields)
+    434  0885a992a3838008              #1 VARINT id = varint(35185251095685)
+    442  1204                          #2 LEN tags len=4 -> packed([0, 0, 1, 1])
+    444  00000101                                
+    448  1803                          #3 VARINT type = varint(3)
+    450  2230                          #4 LEN geometry len=48 -> packed(35 ints: [9, 1292, 127, 122, 6, 26, ..., 0, 687, 15])
+    452  098c0a7f7a061a24c2012eb20130e201        
+    468  068c01434e513ca90140dd01489f0240        
+    484  b70113f10149f101dd013f6100af050f        
+    500  1270                        #2 LEN feature len=112 -> Feature(4 fields)
+    502  0886a992a3838008              #1 VARINT id = varint(35185251095686)
+    510  1204                          #2 LEN tags len=4 -> packed([0, 0, 1, 2])
+    512  00000102                                
+    516  1803                          #3 VARINT type = varint(3)
+    518  225e                          #4 LEN geometry len=94 -> packed(69 ints: [9, 127, 560, 258, 64, 98, ..., 89, 117, 15])
+    520  097fb00482024062f201de01f2014ab8        
+    536  0114a0023fde0147aa013f523b444d05        
+    552  8b012fe1012db10123c1010519660004        
+       ... 46 more payload bytes ...
+    614  1a09                        #3 LEN key len=9 -> string("sort_rank")
+    616  736f72745f72616e6b                    
+    625  1a04                        #3 LEN key len=4 -> string("kind")
+    627  6b696e64                              
+    631  2203                        #4 LEN value len=3 -> Value(1 fields)
+    633  30fa02                        #6 VARINT sint_value = varint(378)
+    636  220c                        #4 LEN value len=12 -> Value(1 fields)
+    638  0a0a                          #1 LEN string_value len=10 -> bytes(10)
+    640  636f6d6d65726369616c                    
+    650  220b                        #4 LEN value len=11 -> Value(1 fields)
+    652  0a09                          #1 LEN string_value len=9 -> bytes(9)
+    654  626172655f726f636b                      
+    663  288020                      #5 VARINT extent = varint(4096)
+    666  7802                        #15 VARINT version = varint(2)
+    668  1ace02                    #3 LEN layers len=334 -> Layer(22 fields)
+    671  0a04                        #1 LEN name len=4 -> string("pois")
+    673  706f6973                              
+    677  1219                        #2 LEN feature len=25 -> Feature(4 fields)
+    679  0892a6f3cb808008              #1 VARINT id = varint(35184531264274)
+    687  1206                          #2 LEN tags len=6 -> packed([0, 0, 1, 1, 2, 2])
+    689  000001010202                            
+    695  1801                          #3 VARINT type = varint(1)
+    697  2205                          #4 LEN geometry len=5 -> packed([9, 338, 268])
+    699  09d2028c02                              
+    704  1219                        #2 LEN feature len=25 -> Feature(4 fields)
+    706  08ddadb8f4888004              #1 VARINT id = varint(17594577721053)
+    714  1206                          #2 LEN tags len=6 -> packed([0, 3, 1, 4, 2, 5])
+    716  000301040205                            
+    722  1801                          #3 VARINT type = varint(1)
+    724  2205                          #4 LEN geometry len=5 -> packed([9, 616, 256])
+    726  09e8048002                              
+    731  1218                        #2 LEN feature len=24 -> Feature(4 fields)
+    733  08c1dfdb8c968004              #1 VARINT id = varint(17598118293441)
+    741  1206                          #2 LEN tags len=6 -> packed([0, 6, 1, 7, 2, 5])
+    743  000601070205                            
+    749  1801                          #3 VARINT type = varint(1)
+    751  2204                          #4 LEN geometry len=4 -> packed([9, 84, 138])
+    753  09548a01                                
+    757  121b                        #2 LEN feature len=27 -> Feature(4 fields)
+    759  08b1bf8a909b8004              #1 VARINT id = varint(17599467528113)
+    767  1208                          #2 LEN tags len=8 -> packed([0, 8, 3, 9, 1, 10, 2, 5])
+    769  00080309010a0205                        
+    777  1801                          #3 VARINT type = varint(1)
+    779  2205                          #4 LEN geometry len=5 -> packed([9, 492, 584])
+    781  09ec03c804                              
+    786  1a04                        #3 LEN key len=4 -> string("name")
+    788  6e616d65                              
+    792  1a04                        #3 LEN key len=4 -> string("kind")
+    794  6b696e64                              
+    798  1a08                        #3 LEN key len=8 -> string("min_zoom")
+    800  6d696e5f7a6f6f6d                      
+    808  1a0b                        #3 LEN key len=11 -> string("kind_detail")
+    810  6b696e645f64657461696c                
+    821  2226                        #4 LEN value len=38 -> Value(1 fields)
+    823  0a24                          #1 LEN string_value len=36 -> bytes(36)
+    825  4d6f6e7465204361726c6f2053706f72        
+    841  74696e6720436c756220616e64204361        
+    857  73696e6f                                
+    861  2208                        #4 LEN value len=8 -> Value(1 fields)
+    863  0a06                          #1 LEN string_value len=6 -> bytes(6)
+    865  636173696e6f                            
+    871  2202                        #4 LEN value len=2 -> Value(1 fields)
+    873  301e                          #6 VARINT sint_value = varint(30)
+    875  2217                        #4 LEN value len=23 -> Value(1 fields)
+    877  0a15                          #1 LEN string_value len=21 -> bytes(21)
+    879  4a696d6d79e280997a204d6f6e74652d        
+    895  4361726c6f                              
+    900  220b                        #4 LEN value len=11 -> Value(1 fields)
+    902  0a09                          #1 LEN string_value len=9 -> bytes(9)
+    904  6e69676874636c7562                      
+    913  2202                        #4 LEN value len=2 -> Value(1 fields)
+    915  3020                          #6 VARINT sint_value = varint(32)
+    917  2213                        #4 LEN value len=19 -> Value(1 fields)
+    919  0a11                          #1 LEN string_value len=17 -> bytes(17)
+    921  53616c6c65206465732045746f696c65        
+    937  73                                      
+    938  220e                        #4 LEN value len=14 -> Value(1 fields)
+    940  0a0c                          #1 LEN string_value len=12 -> bytes(12)
+    942  6576656e74735f76656e7565                
+    954  2212                        #4 LEN value len=18 -> Value(1 fields)
+    956  0a10                          #1 LEN string_value len=16 -> bytes(16)
+    958  434f5941204d6f6e74652d4361726c6f        
+    974  220a                        #4 LEN value len=10 -> Value(1 fields)
+    976  0a08                          #1 LEN string_value len=8 -> bytes(8)
+    978  706572757669616e                        
+    986  220c                        #4 LEN value len=12 -> Value(1 fields)
+    988  0a0a                          #1 LEN string_value len=10 -> bytes(10)
+    990  72657374617572616e74                    
+   1000  288020                      #5 VARINT extent = varint(4096)
+   1003  7802                        #15 VARINT version = varint(2)
+   1005  1a9002                    #3 LEN layers len=272 -> Layer(15 fields)
+   1008  0a05                        #1 LEN name len=5 -> string("roads")
+   1010  726f616473                            
+   1015  128401                      #2 LEN feature len=132 -> Feature(4 fields)
+   1018  08a497e1a5818008              #1 VARINT id = varint(35184719711140)
+   1026  1208                          #2 LEN tags len=8 -> packed([0, 0, 1, 1, 2, 2, 3, 3])
+   1028  0000010102020303                        
+   1036  1802                          #3 VARINT type = varint(2)
+   1038  226e                          #4 LEN geometry len=110 -> packed(94 ints: [9, 668, 127, 74, 268, 236, ..., 163, 59, 91])
+   1040  099c057f4a8c02ec0122281028146201        
+   1056  f0012a42228201002a153209359f025a        
+   1072  751e250e1d121b1e062a181018004817        
+       ... 62 more payload bytes ...
+   1150  121e                        #2 LEN feature len=30 -> Feature(4 fields)
+   1152  08d7ffd0ab828008              #1 VARINT id = varint(35185000464343)
+   1160  1208                          #2 LEN tags len=8 -> packed([0, 4, 1, 1, 2, 5, 3, 3])
+   1162  0004010102050303                        
+   1170  1802                          #3 VARINT type = varint(2)
+   1172  2208                          #4 LEN geometry len=8 -> packed([9, 1144, 118, 10, 76, 370])
+   1174  09f808760a4cf202                        
+   1182  1a0b                        #3 LEN key len=11 -> string("kind_detail")
+   1184  6b696e645f64657461696c                
+   1195  1a09                        #3 LEN key len=9 -> string("sort_rank")
+   1197  736f72745f72616e6b                    
+   1206  1a04                        #3 LEN key len=4 -> string("kind")
+   1208  6b696e64                              
+   1212  1a08                        #3 LEN key len=8 -> string("min_zoom")
+   1214  6d696e5f7a6f6f6d                      
+   1222  2209                        #4 LEN value len=9 -> Value(1 fields)
+   1224  0a07                          #1 LEN string_value len=7 -> bytes(7)
+   1226  73657276696365                          
+   1233  2203                        #4 LEN value len=3 -> Value(1 fields)
+   1235  30a006                        #6 VARINT sint_value = varint(800)
+   1238  220c                        #4 LEN value len=12 -> Value(1 fields)
+   1240  0a0a                          #1 LEN string_value len=10 -> bytes(10)
+   1242  6d696e6f725f726f6164                    
+   1252  2202                        #4 LEN value len=2 -> Value(1 fields)
+   1254  301c                          #6 VARINT sint_value = varint(28)
+   1256  2209                        #4 LEN value len=9 -> Value(1 fields)
+   1258  0a07                          #1 LEN string_value len=7 -> bytes(7)
+   1260  666f6f74776179                          
+   1267  2206                        #4 LEN value len=6 -> Value(1 fields)
+   1269  0a04                          #1 LEN string_value len=4 -> bytes(4)
+   1271  70617468                                
+   1275  288020                      #5 VARINT extent = varint(4096)
+   1278  7802                        #15 VARINT version = varint(2)
+   1280  1a8b02                    #3 LEN layers len=267 -> Layer(16 fields)
+   1283  0a05                        #1 LEN name len=5 -> string("water")
+   1285  7761746572                            
+   1290  1218                        #2 LEN feature len=24 -> Feature(4 fields)
+   1292  08f8cd83ac15                  #1 VARINT id = varint(5729478392)
+   1298  1208                          #2 LEN tags len=8 -> packed([0, 0, 1, 1, 2, 2, 3, 3])
+   1300  0000010102020303                        
+   1308  1801                          #3 VARINT type = varint(1)
+   1310  2204                          #4 LEN geometry len=4 -> packed([9, 2109, 11])
+   1312  09bd100b                                
+   1316  1250                        #2 LEN feature len=80 -> Feature(4 fields)
+   1318  0801                          #1 VARINT id = varint(1)
+   1320  1204                          #2 LEN tags len=4 -> packed([1, 1, 2, 4])
+   1322  01010204                                
+   1326  1803                          #3 VARINT type = varint(3)
+   1328  2244                          #4 LEN geometry len=68 -> packed(47 ints: [9, 255, 8448, 170, 0, 7867, ..., 0, 8704, 15])
+   1330  09ff018042aa0100bb3d62a601789c01        
+   1346  940176a0013a8c0120ba01107c0b9c01        
+   1362  1fe6014596013990015f92017d288501        
+       ... 20 more payload bytes ...
+   1398  1229                        #2 LEN feature len=41 -> Feature(4 fields)
+   1400  08cc96dce00f                  #1 VARINT id = varint(4229368652)
+   1406  1204                          #2 LEN tags len=4 -> packed([1, 1, 2, 5])
+   1408  01010205                                
+   1412  1803                          #3 VARINT type = varint(3)
+   1414  2219                          #4 LEN geometry len=25 -> packed(23 ints: [9, 1112, 67, 74, 63, 10, ..., 6, 12, 15])
+   1416  09d808434a3f0a0b41130f2717094f37        
+   1432  060311a20100060c0f                      
+   1441  1a04                        #3 LEN key len=4 -> string("name")
+   1443  6e616d65                              
+   1447  1a09                        #3 LEN key len=9 -> string("sort_rank")
+   1449  736f72745f72616e6b                    
+   1458  1a04                        #3 LEN key len=4 -> string("kind")
+   1460  6b696e64                              
+   1464  1a08                        #3 LEN key len=8 -> string("min_zoom")
+   1466  6d696e5f7a6f6f6d                      
+   1474  2216                        #4 LEN value len=22 -> Value(1 fields)
+   1476  0a14                          #1 LEN string_value len=20 -> bytes(20)
+   1478  466f6e7461696e65206465204c617274        
+   1494  69677565                                
+   1498  2203                        #4 LEN value len=3 -> Value(1 fields)
+   1500  309003                        #6 VARINT sint_value = varint(400)
+   1503  220a                        #4 LEN value len=10 -> Value(1 fields)
+   1505  0a08                          #1 LEN string_value len=8 -> bytes(8)
+   1507  666f756e7461696e                        
+   1515  2202                        #4 LEN value len=2 -> Value(1 fields)
+   1517  3020                          #6 VARINT sint_value = varint(32)
+   1519  2207                        #4 LEN value len=7 -> Value(1 fields)
+   1521  0a05                          #1 LEN string_value len=5 -> bytes(5)
+   1523  6f6365616e                              
+   1528  220f                        #4 LEN value len=15 -> Value(1 fields)
+   1530  0a0d                          #1 LEN string_value len=13 -> bytes(13)
+   1532  7377696d6d696e675f706f6f6c              
+   1545  288020                      #5 VARINT extent = varint(4096)
+   1548  7802                        #15 VARINT version = varint(2)

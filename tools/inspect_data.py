@@ -80,6 +80,280 @@ def read_field(buf: bytes, pos: int) -> tuple[int, int, bytes | int, int]:
 
 
 # ---------------------------------------------------------------------------
+# Order-preserving structural dumpers.
+# ---------------------------------------------------------------------------
+
+# MVT field name hints, indexed as (path_str, field_no) -> human label.
+MVT_NAMES = {
+    ("Tile", 3): "layers",
+    ("Layer", 1): "name",
+    ("Layer", 2): "feature",
+    ("Layer", 3): "key",
+    ("Layer", 4): "value",
+    ("Layer", 5): "extent",
+    ("Layer", 15): "version",
+    ("Feature", 1): "id",
+    ("Feature", 2): "tags",
+    ("Feature", 3): "type",
+    ("Feature", 4): "geometry",
+    ("Value", 1): "string_value",
+    ("Value", 2): "float_value",
+    ("Value", 3): "double_value",
+    ("Value", 4): "int_value",
+    ("Value", 5): "uint_value",
+    ("Value", 6): "sint_value",
+    ("Value", 7): "bool_value",
+}
+
+# Hint about the message type a length-delim child should be parsed as.
+# Path is the parent message type and field number.
+CHILD_TYPE = {
+    ("Tile", 3): "Layer",
+    ("Layer", 2): "Feature",
+    ("Layer", 4): "Value",
+}
+
+# Length-delim leaf interpretation.
+LEAF_KIND = {
+    ("Layer", 1): "string",
+    ("Layer", 3): "string",  # key
+    ("Feature", 2): "packed_varint",
+    ("Feature", 4): "packed_varint",
+}
+
+WIRE_NAMES = {0: "VARINT", 1: "I64", 2: "LEN", 5: "I32"}
+
+
+def _read_packed_varints(buf: bytes) -> list[int]:
+    out: list[int] = []
+    pos = 0
+    while pos < len(buf):
+        v, pos = read_varint(buf, pos)
+        out.append(v)
+    return out
+
+
+def parse_structured(buf: bytes, type_name: str, base_offset: int = 0) -> list[dict]:
+    """Walk a protobuf message, returning fields in wire order with byte offsets.
+
+    Each entry: {
+      "offset":         byte offset where the field starts (tag byte),
+      "tag_offset":     same as `offset`,
+      "value_offset":   byte offset where the field value begins,
+      "end_offset":     byte offset of the first byte AFTER this field,
+      "field_no":       int,
+      "wire":           "VARINT" | "I64" | "LEN" | "I32",
+      "name":           e.g. "layers" or "<field 17>",
+      "value":          for VARINT/I32/I64 the raw int/bytes;
+                        for LEN the bytes (raw) plus optional decoded form.
+      ...
+    }
+
+    For LEN fields, when we know the child message type we recurse and add
+    "fields" (list of nested entries) plus "child_type". For string-typed
+    leaves we add "string". For packed-varint leaves we add "packed".
+    """
+    out: list[dict] = []
+    pos = 0
+    while pos < len(buf):
+        tag_off = pos
+        tag, pos = read_varint(buf, pos)
+        field_no = tag >> 3
+        wire = tag & 7
+        entry: dict = {
+            "offset": base_offset + tag_off,
+            "tag_offset": base_offset + tag_off,
+            "field_no": field_no,
+            "wire": WIRE_NAMES.get(wire, f"wire{wire}"),
+            "name": MVT_NAMES.get((type_name, field_no), f"<field {field_no}>"),
+        }
+        value_off = pos
+        if wire == 0:
+            v, pos = read_varint(buf, pos)
+            entry["value"] = v
+            entry["value_offset"] = base_offset + value_off
+            entry["end_offset"] = base_offset + pos
+        elif wire == 5:
+            entry["value"] = buf[pos : pos + 4]
+            entry["value_offset"] = base_offset + value_off
+            pos += 4
+            entry["end_offset"] = base_offset + pos
+        elif wire == 1:
+            entry["value"] = buf[pos : pos + 8]
+            entry["value_offset"] = base_offset + value_off
+            pos += 8
+            entry["end_offset"] = base_offset + pos
+        elif wire == 2:
+            ln, pos = read_varint(buf, pos)
+            payload_off = pos
+            payload = buf[pos : pos + ln]
+            pos += ln
+            entry["length"] = ln
+            entry["value_offset"] = base_offset + payload_off
+            entry["end_offset"] = base_offset + pos
+            entry["value"] = payload
+            child = CHILD_TYPE.get((type_name, field_no))
+            kind = LEAF_KIND.get((type_name, field_no))
+            if child is not None:
+                entry["child_type"] = child
+                entry["fields"] = parse_structured(payload, child, base_offset + payload_off)
+            elif kind == "string":
+                entry["string"] = payload.decode("utf-8", errors="replace")
+            elif kind == "packed_varint":
+                entry["packed"] = _read_packed_varints(payload)
+        else:
+            raise ValueError(f"unsupported wire type {wire} at pos {tag_off}")
+        out.append(entry)
+    return out
+
+
+# ---------------------------------------------------------------------------
+# JSON / hex / textproto renderers.
+# ---------------------------------------------------------------------------
+
+
+def _entry_to_json(entry: dict, type_name: str) -> dict:
+    """Convert one parsed entry to a JSON-serialisable dict, preserving order
+    via the `fields` list for nested messages. Bytes are rendered as hex.
+    """
+    out = {
+        "field_no": entry["field_no"],
+        "name": entry["name"],
+        "wire": entry["wire"],
+        "offset": entry["offset"],
+        "value_offset": entry["value_offset"],
+        "end_offset": entry["end_offset"],
+    }
+    if entry["wire"] in ("VARINT",):
+        out["value"] = entry["value"]
+    elif entry["wire"] in ("I32", "I64"):
+        out["bytes_hex"] = entry["value"].hex()
+    elif entry["wire"] == "LEN":
+        out["length"] = entry["length"]
+        if "fields" in entry:
+            out["child_type"] = entry["child_type"]
+            out["fields"] = [
+                _entry_to_json(c, entry["child_type"]) for c in entry["fields"]
+            ]
+        elif "string" in entry:
+            out["string"] = entry["string"]
+        elif "packed" in entry:
+            out["packed"] = entry["packed"]
+        else:
+            out["bytes_hex"] = bytes(entry["value"]).hex()
+    return out
+
+
+def dump_json(buf: bytes, type_name: str = "Tile") -> dict:
+    fields = parse_structured(buf, type_name)
+    return {
+        "type": type_name,
+        "byte_length": len(buf),
+        "fields": [_entry_to_json(e, type_name) for e in fields],
+    }
+
+
+def _format_value(entry: dict, max_len: int = 80) -> str:
+    if entry["wire"] == "VARINT":
+        return f"varint({entry['value']})"
+    if entry["wire"] == "LEN":
+        if "string" in entry:
+            s = entry["string"]
+            if len(s) > max_len:
+                s = s[: max_len - 3] + "..."
+            return f"string({json_dumps_str(s)})"
+        if "packed" in entry:
+            arr = entry["packed"]
+            if len(arr) > 12:
+                preview = ", ".join(str(x) for x in arr[:6]) + ", ..., " + ", ".join(
+                    str(x) for x in arr[-3:]
+                )
+                return f"packed({len(arr)} ints: [{preview}])"
+            return f"packed({arr})"
+        if "fields" in entry:
+            return f"{entry['child_type']}({len(entry['fields'])} fields)"
+        return f"bytes({entry['length']})"
+    if entry["wire"] in ("I32", "I64"):
+        return f"{entry['wire']}(0x{entry['value'].hex()})"
+    return "?"
+
+
+def json_dumps_str(s: str) -> str:
+    import json
+
+    return json.dumps(s, ensure_ascii=False)
+
+
+def render_textproto(entries: list[dict], indent: int = 0) -> str:
+    """Render entries as a textproto-ish string with byte offsets prefixed.
+
+    Each line:  <offset>: <indent>field_no(wire) name = value
+    """
+    lines: list[str] = []
+    pad = "  " * indent
+    for e in entries:
+        head = f"{e['offset']:>7}: {pad}#{e['field_no']:<2} {e['wire']:<6} {e['name']:<14}"
+        if e["wire"] == "LEN" and "fields" in e:
+            lines.append(f"{head} = {e['child_type']} {{  // len={e['length']}")
+            lines.append(render_textproto(e["fields"], indent + 1))
+            lines.append(f"       : {pad}}}  // end {e['name']}")
+        else:
+            lines.append(f"{head} = {_format_value(e)}")
+    return "\n".join(lines)
+
+
+def render_hex_dump(buf: bytes, entries: list[dict], indent: int = 0) -> str:
+    """Annotated hex dump: each protobuf field shown with its raw bytes.
+
+    Output per field (length-delim shown with its tag/length bytes; the
+    payload bytes follow on subsequent lines, optionally recursed for
+    nested messages):
+        <offset> <hex bytes>   #<field_no> <wire> <name> = <value summary>
+    """
+    out: list[str] = []
+    pad = "  " * indent
+
+    def hex_chunk(b: bytes, width: int = 16) -> list[str]:
+        s = b.hex()
+        return [s[i : i + width * 2] for i in range(0, len(s), width * 2)]
+
+    for e in entries:
+        # Tag bytes occupy [tag_offset, value_offset).
+        tag_bytes = buf[e["tag_offset"] : e["value_offset"]]
+        if e["wire"] == "LEN":
+            payload = buf[e["value_offset"] : e["end_offset"]]
+            label = (
+                f"#{e['field_no']} {e['wire']} {e['name']} "
+                f"len={e['length']} -> {_format_value(e)}"
+            )
+            out.append(
+                f"{e['tag_offset']:>7}  {tag_bytes.hex():<24}  {pad}{label}"
+            )
+            if "fields" in e:
+                out.append(render_hex_dump(buf, e["fields"], indent + 1))
+            else:
+                # Show a few hex chunks of the payload so the user can see the bytes.
+                preview = hex_chunk(payload[:48])
+                for i, chunk in enumerate(preview):
+                    off = e["value_offset"] + i * 16
+                    out.append(f"{off:>7}  {chunk:<32}  {pad}  ")
+                if len(payload) > 48:
+                    out.append(
+                        f"       ... {len(payload) - 48} more payload bytes ..."
+                    )
+        else:
+            value_bytes = buf[e["value_offset"] : e["end_offset"]]
+            label = (
+                f"#{e['field_no']} {e['wire']} {e['name']} = {_format_value(e)}"
+            )
+            out.append(
+                f"{e['tag_offset']:>7}  "
+                f"{(tag_bytes + value_bytes).hex():<24}  {pad}{label}"
+            )
+    return "\n".join(out)
+
+
+# ---------------------------------------------------------------------------
 # MVT decoding.
 # ---------------------------------------------------------------------------
 
@@ -461,6 +735,36 @@ def main() -> None:
         default=None,
         help="Limit how many records the summary walks (default: all)",
     )
+    parser.add_argument(
+        "--json",
+        action="store_true",
+        help=(
+            "Dump the targeted tile as JSON, preserving on-wire field order "
+            "and byte offsets. Use with --tile/--tile-id/--zxy."
+        ),
+    )
+    parser.add_argument(
+        "--hex",
+        action="store_true",
+        help=(
+            "Annotated hex dump of the targeted tile's protobuf bytes, with "
+            "each field labelled inline. Use with --tile/--tile-id/--zxy."
+        ),
+    )
+    parser.add_argument(
+        "--textproto",
+        action="store_true",
+        help=(
+            "Compact textproto-ish dump (one line per field with byte "
+            "offsets and value summaries). Use with --tile/--tile-id/--zxy."
+        ),
+    )
+    parser.add_argument(
+        "--out",
+        type=Path,
+        default=None,
+        help="Write the dump to this file instead of stdout",
+    )
     args = parser.parse_args()
     target_tile_id: int | None = None
     if args.zxy is not None:
@@ -470,12 +774,62 @@ def main() -> None:
     elif args.tile_id is not None:
         target_tile_id = args.tile_id
 
+    structured_modes = (args.json, args.hex, args.textproto)
+    want_structured = any(structured_modes)
+
+    def write_out(text: str) -> None:
+        if args.out is not None:
+            args.out.write_text(text + "\n", encoding="utf-8")
+            print(f"wrote {len(text)} chars to {args.out}")
+        else:
+            print(text)
+
+    def emit_payload(idx: int, tile_id: int, payload: bytes) -> None:
+        z, x, y = _tile_id_to_zxy(tile_id)
+        header = f"# record {idx} tile_id={tile_id} z={z} x={x} y={y} bytes={len(payload):,}"
+        if args.json:
+            import json as _json
+
+            doc = {
+                "record": idx,
+                "tile_id": tile_id,
+                "zxy": [z, x, y],
+                "payload": dump_json(payload, "Tile"),
+            }
+            write_out(_json.dumps(doc, indent=2, ensure_ascii=False))
+            return
+        entries = parse_structured(payload, "Tile")
+        if args.hex:
+            text = header + "\n" + render_hex_dump(payload, entries)
+            write_out(text)
+            return
+        if args.textproto:
+            text = header + "\n" + render_textproto(entries)
+            write_out(text)
+            return
+        # Fallback: shouldn't reach here when want_structured is True.
+        write_out(header)
+
+    if want_structured and args.tile is None and target_tile_id is None:
+        print("--json/--hex/--textproto requires --tile, --tile-id, or --zxy")
+        return
+
     if args.tile is not None:
-        dump_one(args.path, args.tile, args.max_features, args.max_items)
+        if want_structured:
+            for idx, tid, payload in walk_records(args.path):
+                if idx == args.tile:
+                    emit_payload(idx, tid, payload)
+                    return
+            print(f"no record at index {args.tile}")
+        else:
+            dump_one(args.path, args.tile, args.max_features, args.max_items)
     elif target_tile_id is not None:
-        for idx, tid, _ in walk_records(args.path):
+        for idx, tid, payload in walk_records(args.path):
             if tid == target_tile_id:
-                dump_one(args.path, idx, args.max_features, args.max_items)
+                if want_structured:
+                    emit_payload(idx, tid, payload)
+                else:
+                    dump_one(args.path, idx, args.max_features, args.max_items)
                 return
         print(f"no record with tile_id={target_tile_id}")
     else:

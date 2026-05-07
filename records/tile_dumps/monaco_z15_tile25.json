@@ -1,0 +1,2526 @@
+{
+  "record": 25,
+  "tile_id": 1269266481,
+  "zxy": [
+    15,
+    17061,
+    11947
+  ],
+  "payload": {
+    "type": "Tile",
+    "byte_length": 1550,
+    "fields": [
+      {
+        "field_no": 3,
+        "name": "layers",
+        "wire": "LEN",
+        "offset": 0,
+        "value_offset": 3,
+        "end_offset": 317,
+        "length": 314,
+        "child_type": "Layer",
+        "fields": [
+          {
+            "field_no": 1,
+            "name": "name",
+            "wire": "LEN",
+            "offset": 3,
+            "value_offset": 5,
+            "end_offset": 14,
+            "length": 9,
+            "string": "buildings"
+          },
+          {
+            "field_no": 2,
+            "name": "feature",
+            "wire": "LEN",
+            "offset": 14,
+            "value_offset": 16,
+            "end_offset": 120,
+            "length": 104,
+            "child_type": "Feature",
+            "fields": [
+              {
+                "field_no": 1,
+                "name": "id",
+                "wire": "VARINT",
+                "offset": 16,
+                "value_offset": 17,
+                "end_offset": 24,
+                "value": 35184531264274
+              },
+              {
+                "field_no": 2,
+                "name": "tags",
+                "wire": "LEN",
+                "offset": 24,
+                "value_offset": 26,
+                "end_offset": 30,
+                "length": 4,
+                "packed": [
+                  0,
+                  0,
+                  1,
+                  1
+                ]
+              },
+              {
+                "field_no": 3,
+                "name": "type",
+                "wire": "VARINT",
+                "offset": 30,
+                "value_offset": 31,
+                "end_offset": 32,
+                "value": 3
+              },
+              {
+                "field_no": 4,
+                "name": "geometry",
+                "wire": "LEN",
+                "offset": 32,
+                "value_offset": 34,
+                "end_offset": 120,
+                "length": 86,
+                "packed": [
+                  9,
+                  282,
+                  127,
+                  290,
+                  84,
+                  134,
+                  38,
+                  47,
+                  78,
+                  27,
+                  40,
+                  10,
+                  20,
+                  30,
+                  0,
+                  32,
+                  32,
+                  6,
+                  26,
+                  22,
+                  8,
+                  42,
+                  13,
+                  34,
+                  78,
+                  80,
+                  50,
+                  1,
+                  32,
+                  26,
+                  0,
+                  36,
+                  62,
+                  1,
+                  48,
+                  6,
+                  30,
+                  38,
+                  8,
+                  42,
+                  15,
+                  36,
+                  25,
+                  30,
+                  43,
+                  10,
+                  37,
+                  2,
+                  111,
+                  128,
+                  57,
+                  80,
+                  89,
+                  58,
+                  119,
+                  129,
+                  99,
+                  29,
+                  157,
+                  6,
+                  1,
+                  23,
+                  143,
+                  23,
+                  121,
+                  53,
+                  0,
+                  503,
+                  74,
+                  41,
+                  192,
+                  0,
+                  68,
+                  30,
+                  22,
+                  29,
+                  15
+                ]
+              }
+            ]
+          },
+          {
+            "field_no": 2,
+            "name": "feature",
+            "wire": "LEN",
+            "offset": 120,
+            "value_offset": 122,
+            "end_offset": 153,
+            "length": 31,
+            "child_type": "Feature",
+            "fields": [
+              {
+                "field_no": 1,
+                "name": "id",
+                "wire": "VARINT",
+                "offset": 122,
+                "value_offset": 123,
+                "end_offset": 130,
+                "value": 35184867829769
+              },
+              {
+                "field_no": 2,
+                "name": "tags",
+                "wire": "LEN",
+                "offset": 130,
+                "value_offset": 132,
+                "end_offset": 136,
+                "length": 4,
+                "packed": [
+                  0,
+                  0,
+                  1,
+                  1
+                ]
+              },
+              {
+                "field_no": 3,
+                "name": "type",
+                "wire": "VARINT",
+                "offset": 136,
+                "value_offset": 137,
+                "end_offset": 138,
+                "value": 3
+              },
+              {
+                "field_no": 4,
+                "name": "geometry",
+                "wire": "LEN",
+                "offset": 138,
+                "value_offset": 140,
+                "end_offset": 153,
+                "length": 13,
+                "packed": [
+                  9,
+                  1176,
+                  168,
+                  26,
+                  56,
+                  9,
+                  8,
+                  44,
+                  55,
+                  10,
+                  15
+                ]
+              }
+            ]
+          },
+          {
+            "field_no": 2,
+            "name": "feature",
+            "wire": "LEN",
+            "offset": 153,
+            "value_offset": 155,
+            "end_offset": 186,
+            "length": 31,
+            "child_type": "Feature",
+            "fields": [
+              {
+                "field_no": 1,
+                "name": "id",
+                "wire": "VARINT",
+                "offset": 155,
+                "value_offset": 156,
+                "end_offset": 163,
+                "value": 35184867829770
+              },
+              {
+                "field_no": 2,
+                "name": "tags",
+                "wire": "LEN",
+                "offset": 163,
+                "value_offset": 165,
+                "end_offset": 169,
+                "length": 4,
+                "packed": [
+                  0,
+                  0,
+                  1,
+                  1
+                ]
+              },
+              {
+                "field_no": 3,
+                "name": "type",
+                "wire": "VARINT",
+                "offset": 169,
+                "value_offset": 170,
+                "end_offset": 171,
+                "value": 3
+              },
+              {
+                "field_no": 4,
+                "name": "geometry",
+                "wire": "LEN",
+                "offset": 171,
+                "value_offset": 173,
+                "end_offset": 186,
+                "length": 13,
+                "packed": [
+                  9,
+                  1050,
+                  190,
+                  26,
+                  58,
+                  9,
+                  8,
+                  48,
+                  57,
+                  10,
+                  15
+                ]
+              }
+            ]
+          },
+          {
+            "field_no": 2,
+            "name": "feature",
+            "wire": "LEN",
+            "offset": 186,
+            "value_offset": 188,
+            "end_offset": 218,
+            "length": 30,
+            "child_type": "Feature",
+            "fields": [
+              {
+                "field_no": 1,
+                "name": "id",
+                "wire": "VARINT",
+                "offset": 188,
+                "value_offset": 189,
+                "end_offset": 196,
+                "value": 35184867829772
+              },
+              {
+                "field_no": 2,
+                "name": "tags",
+                "wire": "LEN",
+                "offset": 196,
+                "value_offset": 198,
+                "end_offset": 202,
+                "length": 4,
+                "packed": [
+                  0,
+                  0,
+                  1,
+                  1
+                ]
+              },
+              {
+                "field_no": 3,
+                "name": "type",
+                "wire": "VARINT",
+                "offset": 202,
+                "value_offset": 203,
+                "end_offset": 204,
+                "value": 3
+              },
+              {
+                "field_no": 4,
+                "name": "geometry",
+                "wire": "LEN",
+                "offset": 204,
+                "value_offset": 206,
+                "end_offset": 218,
+                "length": 12,
+                "packed": [
+                  9,
+                  1242,
+                  127,
+                  26,
+                  8,
+                  44,
+                  79,
+                  16,
+                  9,
+                  59,
+                  15
+                ]
+              }
+            ]
+          },
+          {
+            "field_no": 2,
+            "name": "feature",
+            "wire": "LEN",
+            "offset": 218,
+            "value_offset": 220,
+            "end_offset": 243,
+            "length": 23,
+            "child_type": "Feature",
+            "fields": [
+              {
+                "field_no": 1,
+                "name": "id",
+                "wire": "VARINT",
+                "offset": 220,
+                "value_offset": 221,
+                "end_offset": 228,
+                "value": 17594577721053
+              },
+              {
+                "field_no": 2,
+                "name": "tags",
+                "wire": "LEN",
+                "offset": 228,
+                "value_offset": 230,
+                "end_offset": 234,
+                "length": 4,
+                "packed": [
+                  2,
+                  2,
+                  1,
+                  3
+                ]
+              },
+              {
+                "field_no": 3,
+                "name": "type",
+                "wire": "VARINT",
+                "offset": 234,
+                "value_offset": 235,
+                "end_offset": 236,
+                "value": 1
+              },
+              {
+                "field_no": 4,
+                "name": "geometry",
+                "wire": "LEN",
+                "offset": 236,
+                "value_offset": 238,
+                "end_offset": 243,
+                "length": 5,
+                "packed": [
+                  9,
+                  616,
+                  256
+                ]
+              }
+            ]
+          },
+          {
+            "field_no": 3,
+            "name": "key",
+            "wire": "LEN",
+            "offset": 243,
+            "value_offset": 245,
+            "end_offset": 254,
+            "length": 9,
+            "string": "sort_rank"
+          },
+          {
+            "field_no": 3,
+            "name": "key",
+            "wire": "LEN",
+            "offset": 254,
+            "value_offset": 256,
+            "end_offset": 260,
+            "length": 4,
+            "string": "kind"
+          },
+          {
+            "field_no": 3,
+            "name": "key",
+            "wire": "LEN",
+            "offset": 260,
+            "value_offset": 262,
+            "end_offset": 278,
+            "length": 16,
+            "string": "addr_housenumber"
+          },
+          {
+            "field_no": 4,
+            "name": "value",
+            "wire": "LEN",
+            "offset": 278,
+            "value_offset": 280,
+            "end_offset": 283,
+            "length": 3,
+            "child_type": "Value",
+            "fields": [
+              {
+                "field_no": 6,
+                "name": "sint_value",
+                "wire": "VARINT",
+                "offset": 280,
+                "value_offset": 281,
+                "end_offset": 283,
+                "value": 800
+              }
+            ]
+          },
+          {
+            "field_no": 4,
+            "name": "value",
+            "wire": "LEN",
+            "offset": 283,
+            "value_offset": 285,
+            "end_offset": 295,
+            "length": 10,
+            "child_type": "Value",
+            "fields": [
+              {
+                "field_no": 1,
+                "name": "string_value",
+                "wire": "LEN",
+                "offset": 285,
+                "value_offset": 287,
+                "end_offset": 295,
+                "length": 8,
+                "bytes_hex": "6275696c64696e67"
+              }
+            ]
+          },
+          {
+            "field_no": 4,
+            "name": "value",
+            "wire": "LEN",
+            "offset": 295,
+            "value_offset": 297,
+            "end_offset": 301,
+            "length": 4,
+            "child_type": "Value",
+            "fields": [
+              {
+                "field_no": 1,
+                "name": "string_value",
+                "wire": "LEN",
+                "offset": 297,
+                "value_offset": 299,
+                "end_offset": 301,
+                "length": 2,
+                "bytes_hex": "3236"
+              }
+            ]
+          },
+          {
+            "field_no": 4,
+            "name": "value",
+            "wire": "LEN",
+            "offset": 301,
+            "value_offset": 303,
+            "end_offset": 312,
+            "length": 9,
+            "child_type": "Value",
+            "fields": [
+              {
+                "field_no": 1,
+                "name": "string_value",
+                "wire": "LEN",
+                "offset": 303,
+                "value_offset": 305,
+                "end_offset": 312,
+                "length": 7,
+                "bytes_hex": "61646472657373"
+              }
+            ]
+          },
+          {
+            "field_no": 5,
+            "name": "extent",
+            "wire": "VARINT",
+            "offset": 312,
+            "value_offset": 313,
+            "end_offset": 315,
+            "value": 4096
+          },
+          {
+            "field_no": 15,
+            "name": "version",
+            "wire": "VARINT",
+            "offset": 315,
+            "value_offset": 316,
+            "end_offset": 317,
+            "value": 2
+          }
+        ]
+      },
+      {
+        "field_no": 3,
+        "name": "layers",
+        "wire": "LEN",
+        "offset": 317,
+        "value_offset": 319,
+        "end_offset": 420,
+        "length": 101,
+        "child_type": "Layer",
+        "fields": [
+          {
+            "field_no": 1,
+            "name": "name",
+            "wire": "LEN",
+            "offset": 319,
+            "value_offset": 321,
+            "end_offset": 326,
+            "length": 5,
+            "string": "earth"
+          },
+          {
+            "field_no": 2,
+            "name": "feature",
+            "wire": "LEN",
+            "offset": 326,
+            "value_offset": 328,
+            "end_offset": 400,
+            "length": 72,
+            "child_type": "Feature",
+            "fields": [
+              {
+                "field_no": 1,
+                "name": "id",
+                "wire": "VARINT",
+                "offset": 328,
+                "value_offset": 329,
+                "end_offset": 330,
+                "value": 1
+              },
+              {
+                "field_no": 2,
+                "name": "tags",
+                "wire": "LEN",
+                "offset": 330,
+                "value_offset": 332,
+                "end_offset": 334,
+                "length": 2,
+                "packed": [
+                  0,
+                  0
+                ]
+              },
+              {
+                "field_no": 3,
+                "name": "type",
+                "wire": "VARINT",
+                "offset": 334,
+                "value_offset": 335,
+                "end_offset": 336,
+                "value": 3
+              },
+              {
+                "field_no": 4,
+                "name": "geometry",
+                "wire": "LEN",
+                "offset": 336,
+                "value_offset": 338,
+                "end_offset": 400,
+                "length": 62,
+                "packed": [
+                  9,
+                  1368,
+                  255,
+                  154,
+                  30,
+                  146,
+                  38,
+                  120,
+                  48,
+                  110,
+                  58,
+                  292,
+                  44,
+                  186,
+                  39,
+                  134,
+                  145,
+                  126,
+                  143,
+                  96,
+                  149,
+                  58,
+                  229,
+                  70,
+                  155,
+                  32,
+                  123,
+                  12,
+                  185,
+                  15,
+                  139,
+                  31,
+                  159,
+                  57,
+                  147,
+                  117,
+                  119,
+                  155,
+                  97,
+                  165,
+                  0,
+                  835,
+                  15
+                ]
+              }
+            ]
+          },
+          {
+            "field_no": 3,
+            "name": "key",
+            "wire": "LEN",
+            "offset": 400,
+            "value_offset": 402,
+            "end_offset": 406,
+            "length": 4,
+            "string": "kind"
+          },
+          {
+            "field_no": 4,
+            "name": "value",
+            "wire": "LEN",
+            "offset": 406,
+            "value_offset": 408,
+            "end_offset": 415,
+            "length": 7,
+            "child_type": "Value",
+            "fields": [
+              {
+                "field_no": 1,
+                "name": "string_value",
+                "wire": "LEN",
+                "offset": 408,
+                "value_offset": 410,
+                "end_offset": 415,
+                "length": 5,
+                "bytes_hex": "6561727468"
+              }
+            ]
+          },
+          {
+            "field_no": 5,
+            "name": "extent",
+            "wire": "VARINT",
+            "offset": 415,
+            "value_offset": 416,
+            "end_offset": 418,
+            "value": 4096
+          },
+          {
+            "field_no": 15,
+            "name": "version",
+            "wire": "VARINT",
+            "offset": 418,
+            "value_offset": 419,
+            "end_offset": 420,
+            "value": 2
+          }
+        ]
+      },
+      {
+        "field_no": 3,
+        "name": "layers",
+        "wire": "LEN",
+        "offset": 420,
+        "value_offset": 423,
+        "end_offset": 668,
+        "length": 245,
+        "child_type": "Layer",
+        "fields": [
+          {
+            "field_no": 1,
+            "name": "name",
+            "wire": "LEN",
+            "offset": 423,
+            "value_offset": 425,
+            "end_offset": 432,
+            "length": 7,
+            "string": "landuse"
+          },
+          {
+            "field_no": 2,
+            "name": "feature",
+            "wire": "LEN",
+            "offset": 432,
+            "value_offset": 434,
+            "end_offset": 500,
+            "length": 66,
+            "child_type": "Feature",
+            "fields": [
+              {
+                "field_no": 1,
+                "name": "id",
+                "wire": "VARINT",
+                "offset": 434,
+                "value_offset": 435,
+                "end_offset": 442,
+                "value": 35185251095685
+              },
+              {
+                "field_no": 2,
+                "name": "tags",
+                "wire": "LEN",
+                "offset": 442,
+                "value_offset": 444,
+                "end_offset": 448,
+                "length": 4,
+                "packed": [
+                  0,
+                  0,
+                  1,
+                  1
+                ]
+              },
+              {
+                "field_no": 3,
+                "name": "type",
+                "wire": "VARINT",
+                "offset": 448,
+                "value_offset": 449,
+                "end_offset": 450,
+                "value": 3
+              },
+              {
+                "field_no": 4,
+                "name": "geometry",
+                "wire": "LEN",
+                "offset": 450,
+                "value_offset": 452,
+                "end_offset": 500,
+                "length": 48,
+                "packed": [
+                  9,
+                  1292,
+                  127,
+                  122,
+                  6,
+                  26,
+                  36,
+                  194,
+                  46,
+                  178,
+                  48,
+                  226,
+                  6,
+                  140,
+                  67,
+                  78,
+                  81,
+                  60,
+                  169,
+                  64,
+                  221,
+                  72,
+                  287,
+                  64,
+                  183,
+                  19,
+                  241,
+                  73,
+                  241,
+                  221,
+                  63,
+                  97,
+                  0,
+                  687,
+                  15
+                ]
+              }
+            ]
+          },
+          {
+            "field_no": 2,
+            "name": "feature",
+            "wire": "LEN",
+            "offset": 500,
+            "value_offset": 502,
+            "end_offset": 614,
+            "length": 112,
+            "child_type": "Feature",
+            "fields": [
+              {
+                "field_no": 1,
+                "name": "id",
+                "wire": "VARINT",
+                "offset": 502,
+                "value_offset": 503,
+                "end_offset": 510,
+                "value": 35185251095686
+              },
+              {
+                "field_no": 2,
+                "name": "tags",
+                "wire": "LEN",
+                "offset": 510,
+                "value_offset": 512,
+                "end_offset": 516,
+                "length": 4,
+                "packed": [
+                  0,
+                  0,
+                  1,
+                  2
+                ]
+              },
+              {
+                "field_no": 3,
+                "name": "type",
+                "wire": "VARINT",
+                "offset": 516,
+                "value_offset": 517,
+                "end_offset": 518,
+                "value": 3
+              },
+              {
+                "field_no": 4,
+                "name": "geometry",
+                "wire": "LEN",
+                "offset": 518,
+                "value_offset": 520,
+                "end_offset": 614,
+                "length": 94,
+                "packed": [
+                  9,
+                  127,
+                  560,
+                  258,
+                  64,
+                  98,
+                  242,
+                  222,
+                  242,
+                  74,
+                  184,
+                  20,
+                  288,
+                  63,
+                  222,
+                  71,
+                  170,
+                  63,
+                  82,
+                  59,
+                  68,
+                  77,
+                  5,
+                  139,
+                  47,
+                  225,
+                  45,
+                  177,
+                  35,
+                  193,
+                  5,
+                  25,
+                  102,
+                  0,
+                  4,
+                  18,
+                  38,
+                  120,
+                  48,
+                  110,
+                  58,
+                  292,
+                  44,
+                  186,
+                  39,
+                  134,
+                  145,
+                  126,
+                  143,
+                  96,
+                  149,
+                  58,
+                  229,
+                  70,
+                  155,
+                  32,
+                  123,
+                  12,
+                  185,
+                  15,
+                  139,
+                  31,
+                  159,
+                  57,
+                  147,
+                  117,
+                  89,
+                  117,
+                  15
+                ]
+              }
+            ]
+          },
+          {
+            "field_no": 3,
+            "name": "key",
+            "wire": "LEN",
+            "offset": 614,
+            "value_offset": 616,
+            "end_offset": 625,
+            "length": 9,
+            "string": "sort_rank"
+          },
+          {
+            "field_no": 3,
+            "name": "key",
+            "wire": "LEN",
+            "offset": 625,
+            "value_offset": 627,
+            "end_offset": 631,
+            "length": 4,
+            "string": "kind"
+          },
+          {
+            "field_no": 4,
+            "name": "value",
+            "wire": "LEN",
+            "offset": 631,
+            "value_offset": 633,
+            "end_offset": 636,
+            "length": 3,
+            "child_type": "Value",
+            "fields": [
+              {
+                "field_no": 6,
+                "name": "sint_value",
+                "wire": "VARINT",
+                "offset": 633,
+                "value_offset": 634,
+                "end_offset": 636,
+                "value": 378
+              }
+            ]
+          },
+          {
+            "field_no": 4,
+            "name": "value",
+            "wire": "LEN",
+            "offset": 636,
+            "value_offset": 638,
+            "end_offset": 650,
+            "length": 12,
+            "child_type": "Value",
+            "fields": [
+              {
+                "field_no": 1,
+                "name": "string_value",
+                "wire": "LEN",
+                "offset": 638,
+                "value_offset": 640,
+                "end_offset": 650,
+                "length": 10,
+                "bytes_hex": "636f6d6d65726369616c"
+              }
+            ]
+          },
+          {
+            "field_no": 4,
+            "name": "value",
+            "wire": "LEN",
+            "offset": 650,
+            "value_offset": 652,
+            "end_offset": 663,
+            "length": 11,
+            "child_type": "Value",
+            "fields": [
+              {
+                "field_no": 1,
+                "name": "string_value",
+                "wire": "LEN",
+                "offset": 652,
+                "value_offset": 654,
+                "end_offset": 663,
+                "length": 9,
+                "bytes_hex": "626172655f726f636b"
+              }
+            ]
+          },
+          {
+            "field_no": 5,
+            "name": "extent",
+            "wire": "VARINT",
+            "offset": 663,
+            "value_offset": 664,
+            "end_offset": 666,
+            "value": 4096
+          },
+          {
+            "field_no": 15,
+            "name": "version",
+            "wire": "VARINT",
+            "offset": 666,
+            "value_offset": 667,
+            "end_offset": 668,
+            "value": 2
+          }
+        ]
+      },
+      {
+        "field_no": 3,
+        "name": "layers",
+        "wire": "LEN",
+        "offset": 668,
+        "value_offset": 671,
+        "end_offset": 1005,
+        "length": 334,
+        "child_type": "Layer",
+        "fields": [
+          {
+            "field_no": 1,
+            "name": "name",
+            "wire": "LEN",
+            "offset": 671,
+            "value_offset": 673,
+            "end_offset": 677,
+            "length": 4,
+            "string": "pois"
+          },
+          {
+            "field_no": 2,
+            "name": "feature",
+            "wire": "LEN",
+            "offset": 677,
+            "value_offset": 679,
+            "end_offset": 704,
+            "length": 25,
+            "child_type": "Feature",
+            "fields": [
+              {
+                "field_no": 1,
+                "name": "id",
+                "wire": "VARINT",
+                "offset": 679,
+                "value_offset": 680,
+                "end_offset": 687,
+                "value": 35184531264274
+              },
+              {
+                "field_no": 2,
+                "name": "tags",
+                "wire": "LEN",
+                "offset": 687,
+                "value_offset": 689,
+                "end_offset": 695,
+                "length": 6,
+                "packed": [
+                  0,
+                  0,
+                  1,
+                  1,
+                  2,
+                  2
+                ]
+              },
+              {
+                "field_no": 3,
+                "name": "type",
+                "wire": "VARINT",
+                "offset": 695,
+                "value_offset": 696,
+                "end_offset": 697,
+                "value": 1
+              },
+              {
+                "field_no": 4,
+                "name": "geometry",
+                "wire": "LEN",
+                "offset": 697,
+                "value_offset": 699,
+                "end_offset": 704,
+                "length": 5,
+                "packed": [
+                  9,
+                  338,
+                  268
+                ]
+              }
+            ]
+          },
+          {
+            "field_no": 2,
+            "name": "feature",
+            "wire": "LEN",
+            "offset": 704,
+            "value_offset": 706,
+            "end_offset": 731,
+            "length": 25,
+            "child_type": "Feature",
+            "fields": [
+              {
+                "field_no": 1,
+                "name": "id",
+                "wire": "VARINT",
+                "offset": 706,
+                "value_offset": 707,
+                "end_offset": 714,
+                "value": 17594577721053
+              },
+              {
+                "field_no": 2,
+                "name": "tags",
+                "wire": "LEN",
+                "offset": 714,
+                "value_offset": 716,
+                "end_offset": 722,
+                "length": 6,
+                "packed": [
+                  0,
+                  3,
+                  1,
+                  4,
+                  2,
+                  5
+                ]
+              },
+              {
+                "field_no": 3,
+                "name": "type",
+                "wire": "VARINT",
+                "offset": 722,
+                "value_offset": 723,
+                "end_offset": 724,
+                "value": 1
+              },
+              {
+                "field_no": 4,
+                "name": "geometry",
+                "wire": "LEN",
+                "offset": 724,
+                "value_offset": 726,
+                "end_offset": 731,
+                "length": 5,
+                "packed": [
+                  9,
+                  616,
+                  256
+                ]
+              }
+            ]
+          },
+          {
+            "field_no": 2,
+            "name": "feature",
+            "wire": "LEN",
+            "offset": 731,
+            "value_offset": 733,
+            "end_offset": 757,
+            "length": 24,
+            "child_type": "Feature",
+            "fields": [
+              {
+                "field_no": 1,
+                "name": "id",
+                "wire": "VARINT",
+                "offset": 733,
+                "value_offset": 734,
+                "end_offset": 741,
+                "value": 17598118293441
+              },
+              {
+                "field_no": 2,
+                "name": "tags",
+                "wire": "LEN",
+                "offset": 741,
+                "value_offset": 743,
+                "end_offset": 749,
+                "length": 6,
+                "packed": [
+                  0,
+                  6,
+                  1,
+                  7,
+                  2,
+                  5
+                ]
+              },
+              {
+                "field_no": 3,
+                "name": "type",
+                "wire": "VARINT",
+                "offset": 749,
+                "value_offset": 750,
+                "end_offset": 751,
+                "value": 1
+              },
+              {
+                "field_no": 4,
+                "name": "geometry",
+                "wire": "LEN",
+                "offset": 751,
+                "value_offset": 753,
+                "end_offset": 757,
+                "length": 4,
+                "packed": [
+                  9,
+                  84,
+                  138
+                ]
+              }
+            ]
+          },
+          {
+            "field_no": 2,
+            "name": "feature",
+            "wire": "LEN",
+            "offset": 757,
+            "value_offset": 759,
+            "end_offset": 786,
+            "length": 27,
+            "child_type": "Feature",
+            "fields": [
+              {
+                "field_no": 1,
+                "name": "id",
+                "wire": "VARINT",
+                "offset": 759,
+                "value_offset": 760,
+                "end_offset": 767,
+                "value": 17599467528113
+              },
+              {
+                "field_no": 2,
+                "name": "tags",
+                "wire": "LEN",
+                "offset": 767,
+                "value_offset": 769,
+                "end_offset": 777,
+                "length": 8,
+                "packed": [
+                  0,
+                  8,
+                  3,
+                  9,
+                  1,
+                  10,
+                  2,
+                  5
+                ]
+              },
+              {
+                "field_no": 3,
+                "name": "type",
+                "wire": "VARINT",
+                "offset": 777,
+                "value_offset": 778,
+                "end_offset": 779,
+                "value": 1
+              },
+              {
+                "field_no": 4,
+                "name": "geometry",
+                "wire": "LEN",
+                "offset": 779,
+                "value_offset": 781,
+                "end_offset": 786,
+                "length": 5,
+                "packed": [
+                  9,
+                  492,
+                  584
+                ]
+              }
+            ]
+          },
+          {
+            "field_no": 3,
+            "name": "key",
+            "wire": "LEN",
+            "offset": 786,
+            "value_offset": 788,
+            "end_offset": 792,
+            "length": 4,
+            "string": "name"
+          },
+          {
+            "field_no": 3,
+            "name": "key",
+            "wire": "LEN",
+            "offset": 792,
+            "value_offset": 794,
+            "end_offset": 798,
+            "length": 4,
+            "string": "kind"
+          },
+          {
+            "field_no": 3,
+            "name": "key",
+            "wire": "LEN",
+            "offset": 798,
+            "value_offset": 800,
+            "end_offset": 808,
+            "length": 8,
+            "string": "min_zoom"
+          },
+          {
+            "field_no": 3,
+            "name": "key",
+            "wire": "LEN",
+            "offset": 808,
+            "value_offset": 810,
+            "end_offset": 821,
+            "length": 11,
+            "string": "kind_detail"
+          },
+          {
+            "field_no": 4,
+            "name": "value",
+            "wire": "LEN",
+            "offset": 821,
+            "value_offset": 823,
+            "end_offset": 861,
+            "length": 38,
+            "child_type": "Value",
+            "fields": [
+              {
+                "field_no": 1,
+                "name": "string_value",
+                "wire": "LEN",
+                "offset": 823,
+                "value_offset": 825,
+                "end_offset": 861,
+                "length": 36,
+                "bytes_hex": "4d6f6e7465204361726c6f2053706f7274696e6720436c756220616e6420436173696e6f"
+              }
+            ]
+          },
+          {
+            "field_no": 4,
+            "name": "value",
+            "wire": "LEN",
+            "offset": 861,
+            "value_offset": 863,
+            "end_offset": 871,
+            "length": 8,
+            "child_type": "Value",
+            "fields": [
+              {
+                "field_no": 1,
+                "name": "string_value",
+                "wire": "LEN",
+                "offset": 863,
+                "value_offset": 865,
+                "end_offset": 871,
+                "length": 6,
+                "bytes_hex": "636173696e6f"
+              }
+            ]
+          },
+          {
+            "field_no": 4,
+            "name": "value",
+            "wire": "LEN",
+            "offset": 871,
+            "value_offset": 873,
+            "end_offset": 875,
+            "length": 2,
+            "child_type": "Value",
+            "fields": [
+              {
+                "field_no": 6,
+                "name": "sint_value",
+                "wire": "VARINT",
+                "offset": 873,
+                "value_offset": 874,
+                "end_offset": 875,
+                "value": 30
+              }
+            ]
+          },
+          {
+            "field_no": 4,
+            "name": "value",
+            "wire": "LEN",
+            "offset": 875,
+            "value_offset": 877,
+            "end_offset": 900,
+            "length": 23,
+            "child_type": "Value",
+            "fields": [
+              {
+                "field_no": 1,
+                "name": "string_value",
+                "wire": "LEN",
+                "offset": 877,
+                "value_offset": 879,
+                "end_offset": 900,
+                "length": 21,
+                "bytes_hex": "4a696d6d79e280997a204d6f6e74652d4361726c6f"
+              }
+            ]
+          },
+          {
+            "field_no": 4,
+            "name": "value",
+            "wire": "LEN",
+            "offset": 900,
+            "value_offset": 902,
+            "end_offset": 913,
+            "length": 11,
+            "child_type": "Value",
+            "fields": [
+              {
+                "field_no": 1,
+                "name": "string_value",
+                "wire": "LEN",
+                "offset": 902,
+                "value_offset": 904,
+                "end_offset": 913,
+                "length": 9,
+                "bytes_hex": "6e69676874636c7562"
+              }
+            ]
+          },
+          {
+            "field_no": 4,
+            "name": "value",
+            "wire": "LEN",
+            "offset": 913,
+            "value_offset": 915,
+            "end_offset": 917,
+            "length": 2,
+            "child_type": "Value",
+            "fields": [
+              {
+                "field_no": 6,
+                "name": "sint_value",
+                "wire": "VARINT",
+                "offset": 915,
+                "value_offset": 916,
+                "end_offset": 917,
+                "value": 32
+              }
+            ]
+          },
+          {
+            "field_no": 4,
+            "name": "value",
+            "wire": "LEN",
+            "offset": 917,
+            "value_offset": 919,
+            "end_offset": 938,
+            "length": 19,
+            "child_type": "Value",
+            "fields": [
+              {
+                "field_no": 1,
+                "name": "string_value",
+                "wire": "LEN",
+                "offset": 919,
+                "value_offset": 921,
+                "end_offset": 938,
+                "length": 17,
+                "bytes_hex": "53616c6c65206465732045746f696c6573"
+              }
+            ]
+          },
+          {
+            "field_no": 4,
+            "name": "value",
+            "wire": "LEN",
+            "offset": 938,
+            "value_offset": 940,
+            "end_offset": 954,
+            "length": 14,
+            "child_type": "Value",
+            "fields": [
+              {
+                "field_no": 1,
+                "name": "string_value",
+                "wire": "LEN",
+                "offset": 940,
+                "value_offset": 942,
+                "end_offset": 954,
+                "length": 12,
+                "bytes_hex": "6576656e74735f76656e7565"
+              }
+            ]
+          },
+          {
+            "field_no": 4,
+            "name": "value",
+            "wire": "LEN",
+            "offset": 954,
+            "value_offset": 956,
+            "end_offset": 974,
+            "length": 18,
+            "child_type": "Value",
+            "fields": [
+              {
+                "field_no": 1,
+                "name": "string_value",
+                "wire": "LEN",
+                "offset": 956,
+                "value_offset": 958,
+                "end_offset": 974,
+                "length": 16,
+                "bytes_hex": "434f5941204d6f6e74652d4361726c6f"
+              }
+            ]
+          },
+          {
+            "field_no": 4,
+            "name": "value",
+            "wire": "LEN",
+            "offset": 974,
+            "value_offset": 976,
+            "end_offset": 986,
+            "length": 10,
+            "child_type": "Value",
+            "fields": [
+              {
+                "field_no": 1,
+                "name": "string_value",
+                "wire": "LEN",
+                "offset": 976,
+                "value_offset": 978,
+                "end_offset": 986,
+                "length": 8,
+                "bytes_hex": "706572757669616e"
+              }
+            ]
+          },
+          {
+            "field_no": 4,
+            "name": "value",
+            "wire": "LEN",
+            "offset": 986,
+            "value_offset": 988,
+            "end_offset": 1000,
+            "length": 12,
+            "child_type": "Value",
+            "fields": [
+              {
+                "field_no": 1,
+                "name": "string_value",
+                "wire": "LEN",
+                "offset": 988,
+                "value_offset": 990,
+                "end_offset": 1000,
+                "length": 10,
+                "bytes_hex": "72657374617572616e74"
+              }
+            ]
+          },
+          {
+            "field_no": 5,
+            "name": "extent",
+            "wire": "VARINT",
+            "offset": 1000,
+            "value_offset": 1001,
+            "end_offset": 1003,
+            "value": 4096
+          },
+          {
+            "field_no": 15,
+            "name": "version",
+            "wire": "VARINT",
+            "offset": 1003,
+            "value_offset": 1004,
+            "end_offset": 1005,
+            "value": 2
+          }
+        ]
+      },
+      {
+        "field_no": 3,
+        "name": "layers",
+        "wire": "LEN",
+        "offset": 1005,
+        "value_offset": 1008,
+        "end_offset": 1280,
+        "length": 272,
+        "child_type": "Layer",
+        "fields": [
+          {
+            "field_no": 1,
+            "name": "name",
+            "wire": "LEN",
+            "offset": 1008,
+            "value_offset": 1010,
+            "end_offset": 1015,
+            "length": 5,
+            "string": "roads"
+          },
+          {
+            "field_no": 2,
+            "name": "feature",
+            "wire": "LEN",
+            "offset": 1015,
+            "value_offset": 1018,
+            "end_offset": 1150,
+            "length": 132,
+            "child_type": "Feature",
+            "fields": [
+              {
+                "field_no": 1,
+                "name": "id",
+                "wire": "VARINT",
+                "offset": 1018,
+                "value_offset": 1019,
+                "end_offset": 1026,
+                "value": 35184719711140
+              },
+              {
+                "field_no": 2,
+                "name": "tags",
+                "wire": "LEN",
+                "offset": 1026,
+                "value_offset": 1028,
+                "end_offset": 1036,
+                "length": 8,
+                "packed": [
+                  0,
+                  0,
+                  1,
+                  1,
+                  2,
+                  2,
+                  3,
+                  3
+                ]
+              },
+              {
+                "field_no": 3,
+                "name": "type",
+                "wire": "VARINT",
+                "offset": 1036,
+                "value_offset": 1037,
+                "end_offset": 1038,
+                "value": 2
+              },
+              {
+                "field_no": 4,
+                "name": "geometry",
+                "wire": "LEN",
+                "offset": 1038,
+                "value_offset": 1040,
+                "end_offset": 1150,
+                "length": 110,
+                "packed": [
+                  9,
+                  668,
+                  127,
+                  74,
+                  268,
+                  236,
+                  34,
+                  40,
+                  16,
+                  40,
+                  20,
+                  98,
+                  1,
+                  240,
+                  42,
+                  66,
+                  34,
+                  130,
+                  0,
+                  42,
+                  21,
+                  50,
+                  9,
+                  53,
+                  287,
+                  90,
+                  117,
+                  30,
+                  37,
+                  14,
+                  29,
+                  18,
+                  27,
+                  30,
+                  6,
+                  42,
+                  24,
+                  16,
+                  24,
+                  0,
+                  72,
+                  23,
+                  30,
+                  17,
+                  34,
+                  41,
+                  24,
+                  65,
+                  9,
+                  76,
+                  196,
+                  18,
+                  44,
+                  28,
+                  62,
+                  24,
+                  9,
+                  198,
+                  415,
+                  138,
+                  30,
+                  176,
+                  0,
+                  44,
+                  3,
+                  36,
+                  11,
+                  34,
+                  45,
+                  52,
+                  39,
+                  26,
+                  69,
+                  30,
+                  577,
+                  184,
+                  115,
+                  6,
+                  65,
+                  9,
+                  155,
+                  37,
+                  71,
+                  25,
+                  47,
+                  23,
+                  61,
+                  33,
+                  59,
+                  45,
+                  151,
+                  163,
+                  59,
+                  91
+                ]
+              }
+            ]
+          },
+          {
+            "field_no": 2,
+            "name": "feature",
+            "wire": "LEN",
+            "offset": 1150,
+            "value_offset": 1152,
+            "end_offset": 1182,
+            "length": 30,
+            "child_type": "Feature",
+            "fields": [
+              {
+                "field_no": 1,
+                "name": "id",
+                "wire": "VARINT",
+                "offset": 1152,
+                "value_offset": 1153,
+                "end_offset": 1160,
+                "value": 35185000464343
+              },
+              {
+                "field_no": 2,
+                "name": "tags",
+                "wire": "LEN",
+                "offset": 1160,
+                "value_offset": 1162,
+                "end_offset": 1170,
+                "length": 8,
+                "packed": [
+                  0,
+                  4,
+                  1,
+                  1,
+                  2,
+                  5,
+                  3,
+                  3
+                ]
+              },
+              {
+                "field_no": 3,
+                "name": "type",
+                "wire": "VARINT",
+                "offset": 1170,
+                "value_offset": 1171,
+                "end_offset": 1172,
+                "value": 2
+              },
+              {
+                "field_no": 4,
+                "name": "geometry",
+                "wire": "LEN",
+                "offset": 1172,
+                "value_offset": 1174,
+                "end_offset": 1182,
+                "length": 8,
+                "packed": [
+                  9,
+                  1144,
+                  118,
+                  10,
+                  76,
+                  370
+                ]
+              }
+            ]
+          },
+          {
+            "field_no": 3,
+            "name": "key",
+            "wire": "LEN",
+            "offset": 1182,
+            "value_offset": 1184,
+            "end_offset": 1195,
+            "length": 11,
+            "string": "kind_detail"
+          },
+          {
+            "field_no": 3,
+            "name": "key",
+            "wire": "LEN",
+            "offset": 1195,
+            "value_offset": 1197,
+            "end_offset": 1206,
+            "length": 9,
+            "string": "sort_rank"
+          },
+          {
+            "field_no": 3,
+            "name": "key",
+            "wire": "LEN",
+            "offset": 1206,
+            "value_offset": 1208,
+            "end_offset": 1212,
+            "length": 4,
+            "string": "kind"
+          },
+          {
+            "field_no": 3,
+            "name": "key",
+            "wire": "LEN",
+            "offset": 1212,
+            "value_offset": 1214,
+            "end_offset": 1222,
+            "length": 8,
+            "string": "min_zoom"
+          },
+          {
+            "field_no": 4,
+            "name": "value",
+            "wire": "LEN",
+            "offset": 1222,
+            "value_offset": 1224,
+            "end_offset": 1233,
+            "length": 9,
+            "child_type": "Value",
+            "fields": [
+              {
+                "field_no": 1,
+                "name": "string_value",
+                "wire": "LEN",
+                "offset": 1224,
+                "value_offset": 1226,
+                "end_offset": 1233,
+                "length": 7,
+                "bytes_hex": "73657276696365"
+              }
+            ]
+          },
+          {
+            "field_no": 4,
+            "name": "value",
+            "wire": "LEN",
+            "offset": 1233,
+            "value_offset": 1235,
+            "end_offset": 1238,
+            "length": 3,
+            "child_type": "Value",
+            "fields": [
+              {
+                "field_no": 6,
+                "name": "sint_value",
+                "wire": "VARINT",
+                "offset": 1235,
+                "value_offset": 1236,
+                "end_offset": 1238,
+                "value": 800
+              }
+            ]
+          },
+          {
+            "field_no": 4,
+            "name": "value",
+            "wire": "LEN",
+            "offset": 1238,
+            "value_offset": 1240,
+            "end_offset": 1252,
+            "length": 12,
+            "child_type": "Value",
+            "fields": [
+              {
+                "field_no": 1,
+                "name": "string_value",
+                "wire": "LEN",
+                "offset": 1240,
+                "value_offset": 1242,
+                "end_offset": 1252,
+                "length": 10,
+                "bytes_hex": "6d696e6f725f726f6164"
+              }
+            ]
+          },
+          {
+            "field_no": 4,
+            "name": "value",
+            "wire": "LEN",
+            "offset": 1252,
+            "value_offset": 1254,
+            "end_offset": 1256,
+            "length": 2,
+            "child_type": "Value",
+            "fields": [
+              {
+                "field_no": 6,
+                "name": "sint_value",
+                "wire": "VARINT",
+                "offset": 1254,
+                "value_offset": 1255,
+                "end_offset": 1256,
+                "value": 28
+              }
+            ]
+          },
+          {
+            "field_no": 4,
+            "name": "value",
+            "wire": "LEN",
+            "offset": 1256,
+            "value_offset": 1258,
+            "end_offset": 1267,
+            "length": 9,
+            "child_type": "Value",
+            "fields": [
+              {
+                "field_no": 1,
+                "name": "string_value",
+                "wire": "LEN",
+                "offset": 1258,
+                "value_offset": 1260,
+                "end_offset": 1267,
+                "length": 7,
+                "bytes_hex": "666f6f74776179"
+              }
+            ]
+          },
+          {
+            "field_no": 4,
+            "name": "value",
+            "wire": "LEN",
+            "offset": 1267,
+            "value_offset": 1269,
+            "end_offset": 1275,
+            "length": 6,
+            "child_type": "Value",
+            "fields": [
+              {
+                "field_no": 1,
+                "name": "string_value",
+                "wire": "LEN",
+                "offset": 1269,
+                "value_offset": 1271,
+                "end_offset": 1275,
+                "length": 4,
+                "bytes_hex": "70617468"
+              }
+            ]
+          },
+          {
+            "field_no": 5,
+            "name": "extent",
+            "wire": "VARINT",
+            "offset": 1275,
+            "value_offset": 1276,
+            "end_offset": 1278,
+            "value": 4096
+          },
+          {
+            "field_no": 15,
+            "name": "version",
+            "wire": "VARINT",
+            "offset": 1278,
+            "value_offset": 1279,
+            "end_offset": 1280,
+            "value": 2
+          }
+        ]
+      },
+      {
+        "field_no": 3,
+        "name": "layers",
+        "wire": "LEN",
+        "offset": 1280,
+        "value_offset": 1283,
+        "end_offset": 1550,
+        "length": 267,
+        "child_type": "Layer",
+        "fields": [
+          {
+            "field_no": 1,
+            "name": "name",
+            "wire": "LEN",
+            "offset": 1283,
+            "value_offset": 1285,
+            "end_offset": 1290,
+            "length": 5,
+            "string": "water"
+          },
+          {
+            "field_no": 2,
+            "name": "feature",
+            "wire": "LEN",
+            "offset": 1290,
+            "value_offset": 1292,
+            "end_offset": 1316,
+            "length": 24,
+            "child_type": "Feature",
+            "fields": [
+              {
+                "field_no": 1,
+                "name": "id",
+                "wire": "VARINT",
+                "offset": 1292,
+                "value_offset": 1293,
+                "end_offset": 1298,
+                "value": 5729478392
+              },
+              {
+                "field_no": 2,
+                "name": "tags",
+                "wire": "LEN",
+                "offset": 1298,
+                "value_offset": 1300,
+                "end_offset": 1308,
+                "length": 8,
+                "packed": [
+                  0,
+                  0,
+                  1,
+                  1,
+                  2,
+                  2,
+                  3,
+                  3
+                ]
+              },
+              {
+                "field_no": 3,
+                "name": "type",
+                "wire": "VARINT",
+                "offset": 1308,
+                "value_offset": 1309,
+                "end_offset": 1310,
+                "value": 1
+              },
+              {
+                "field_no": 4,
+                "name": "geometry",
+                "wire": "LEN",
+                "offset": 1310,
+                "value_offset": 1312,
+                "end_offset": 1316,
+                "length": 4,
+                "packed": [
+                  9,
+                  2109,
+                  11
+                ]
+              }
+            ]
+          },
+          {
+            "field_no": 2,
+            "name": "feature",
+            "wire": "LEN",
+            "offset": 1316,
+            "value_offset": 1318,
+            "end_offset": 1398,
+            "length": 80,
+            "child_type": "Feature",
+            "fields": [
+              {
+                "field_no": 1,
+                "name": "id",
+                "wire": "VARINT",
+                "offset": 1318,
+                "value_offset": 1319,
+                "end_offset": 1320,
+                "value": 1
+              },
+              {
+                "field_no": 2,
+                "name": "tags",
+                "wire": "LEN",
+                "offset": 1320,
+                "value_offset": 1322,
+                "end_offset": 1326,
+                "length": 4,
+                "packed": [
+                  1,
+                  1,
+                  2,
+                  4
+                ]
+              },
+              {
+                "field_no": 3,
+                "name": "type",
+                "wire": "VARINT",
+                "offset": 1326,
+                "value_offset": 1327,
+                "end_offset": 1328,
+                "value": 3
+              },
+              {
+                "field_no": 4,
+                "name": "geometry",
+                "wire": "LEN",
+                "offset": 1328,
+                "value_offset": 1330,
+                "end_offset": 1398,
+                "length": 68,
+                "packed": [
+                  9,
+                  255,
+                  8448,
+                  170,
+                  0,
+                  7867,
+                  98,
+                  166,
+                  120,
+                  156,
+                  148,
+                  118,
+                  160,
+                  58,
+                  140,
+                  32,
+                  186,
+                  16,
+                  124,
+                  11,
+                  156,
+                  31,
+                  230,
+                  69,
+                  150,
+                  57,
+                  144,
+                  95,
+                  146,
+                  125,
+                  40,
+                  133,
+                  43,
+                  185,
+                  57,
+                  291,
+                  47,
+                  109,
+                  37,
+                  119,
+                  29,
+                  145,
+                  7080,
+                  0,
+                  0,
+                  8704,
+                  15
+                ]
+              }
+            ]
+          },
+          {
+            "field_no": 2,
+            "name": "feature",
+            "wire": "LEN",
+            "offset": 1398,
+            "value_offset": 1400,
+            "end_offset": 1441,
+            "length": 41,
+            "child_type": "Feature",
+            "fields": [
+              {
+                "field_no": 1,
+                "name": "id",
+                "wire": "VARINT",
+                "offset": 1400,
+                "value_offset": 1401,
+                "end_offset": 1406,
+                "value": 4229368652
+              },
+              {
+                "field_no": 2,
+                "name": "tags",
+                "wire": "LEN",
+                "offset": 1406,
+                "value_offset": 1408,
+                "end_offset": 1412,
+                "length": 4,
+                "packed": [
+                  1,
+                  1,
+                  2,
+                  5
+                ]
+              },
+              {
+                "field_no": 3,
+                "name": "type",
+                "wire": "VARINT",
+                "offset": 1412,
+                "value_offset": 1413,
+                "end_offset": 1414,
+                "value": 3
+              },
+              {
+                "field_no": 4,
+                "name": "geometry",
+                "wire": "LEN",
+                "offset": 1414,
+                "value_offset": 1416,
+                "end_offset": 1441,
+                "length": 25,
+                "packed": [
+                  9,
+                  1112,
+                  67,
+                  74,
+                  63,
+                  10,
+                  11,
+                  65,
+                  19,
+                  15,
+                  39,
+                  23,
+                  9,
+                  79,
+                  55,
+                  6,
+                  3,
+                  17,
+                  162,
+                  0,
+                  6,
+                  12,
+                  15
+                ]
+              }
+            ]
+          },
+          {
+            "field_no": 3,
+            "name": "key",
+            "wire": "LEN",
+            "offset": 1441,
+            "value_offset": 1443,
+            "end_offset": 1447,
+            "length": 4,
+            "string": "name"
+          },
+          {
+            "field_no": 3,
+            "name": "key",
+            "wire": "LEN",
+            "offset": 1447,
+            "value_offset": 1449,
+            "end_offset": 1458,
+            "length": 9,
+            "string": "sort_rank"
+          },
+          {
+            "field_no": 3,
+            "name": "key",
+            "wire": "LEN",
+            "offset": 1458,
+            "value_offset": 1460,
+            "end_offset": 1464,
+            "length": 4,
+            "string": "kind"
+          },
+          {
+            "field_no": 3,
+            "name": "key",
+            "wire": "LEN",
+            "offset": 1464,
+            "value_offset": 1466,
+            "end_offset": 1474,
+            "length": 8,
+            "string": "min_zoom"
+          },
+          {
+            "field_no": 4,
+            "name": "value",
+            "wire": "LEN",
+            "offset": 1474,
+            "value_offset": 1476,
+            "end_offset": 1498,
+            "length": 22,
+            "child_type": "Value",
+            "fields": [
+              {
+                "field_no": 1,
+                "name": "string_value",
+                "wire": "LEN",
+                "offset": 1476,
+                "value_offset": 1478,
+                "end_offset": 1498,
+                "length": 20,
+                "bytes_hex": "466f6e7461696e65206465204c61727469677565"
+              }
+            ]
+          },
+          {
+            "field_no": 4,
+            "name": "value",
+            "wire": "LEN",
+            "offset": 1498,
+            "value_offset": 1500,
+            "end_offset": 1503,
+            "length": 3,
+            "child_type": "Value",
+            "fields": [
+              {
+                "field_no": 6,
+                "name": "sint_value",
+                "wire": "VARINT",
+                "offset": 1500,
+                "value_offset": 1501,
+                "end_offset": 1503,
+                "value": 400
+              }
+            ]
+          },
+          {
+            "field_no": 4,
+            "name": "value",
+            "wire": "LEN",
+            "offset": 1503,
+            "value_offset": 1505,
+            "end_offset": 1515,
+            "length": 10,
+            "child_type": "Value",
+            "fields": [
+              {
+                "field_no": 1,
+                "name": "string_value",
+                "wire": "LEN",
+                "offset": 1505,
+                "value_offset": 1507,
+                "end_offset": 1515,
+                "length": 8,
+                "bytes_hex": "666f756e7461696e"
+              }
+            ]
+          },
+          {
+            "field_no": 4,
+            "name": "value",
+            "wire": "LEN",
+            "offset": 1515,
+            "value_offset": 1517,
+            "end_offset": 1519,
+            "length": 2,
+            "child_type": "Value",
+            "fields": [
+              {
+                "field_no": 6,
+                "name": "sint_value",
+                "wire": "VARINT",
+                "offset": 1517,
+                "value_offset": 1518,
+                "end_offset": 1519,
+                "value": 32
+              }
+            ]
+          },
+          {
+            "field_no": 4,
+            "name": "value",
+            "wire": "LEN",
+            "offset": 1519,
+            "value_offset": 1521,
+            "end_offset": 1528,
+            "length": 7,
+            "child_type": "Value",
+            "fields": [
+              {
+                "field_no": 1,
+                "name": "string_value",
+                "wire": "LEN",
+                "offset": 1521,
+                "value_offset": 1523,
+                "end_offset": 1528,
+                "length": 5,
+                "bytes_hex": "6f6365616e"
+              }
+            ]
+          },
+          {
+            "field_no": 4,
+            "name": "value",
+            "wire": "LEN",
+            "offset": 1528,
+            "value_offset": 1530,
+            "end_offset": 1545,
+            "length": 15,
+            "child_type": "Value",
+            "fields": [
+              {
+                "field_no": 1,
+                "name": "string_value",
+                "wire": "LEN",
+                "offset": 1530,
+                "value_offset": 1532,
+                "end_offset": 1545,
+                "length": 13,
+                "bytes_hex": "7377696d6d696e675f706f6f6c"
+              }
+            ]
+          },
+          {
+            "field_no": 5,
+            "name": "extent",
+            "wire": "VARINT",
+            "offset": 1545,
+            "value_offset": 1546,
+            "end_offset": 1548,
+            "value": 4096
+          },
+          {
+            "field_no": 15,
+            "name": "version",
+            "wire": "VARINT",
+            "offset": 1548,
+            "value_offset": 1549,
+            "end_offset": 1550,
+            "value": 2
+          }
+        ]
+      }
+    ]
+  }
+}
