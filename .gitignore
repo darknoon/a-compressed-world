@@ -7,7 +7,10 @@ __pycache__/
 data/raw/
 data/processed/
 runs/
-tools/
+# Ignore everything under tools/ (notably the 57 MB pmtiles binary) but
+# keep tracked .py helper scripts.
+tools/*
+!tools/*.py
 
 
 *.pt
