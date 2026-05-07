@@ -59,6 +59,11 @@ NNCP_SLIDE = int(os.environ.get("ACW_NNCP_SLIDE", "256"))
 # "mostly local with a few full" pattern. Default full indices are the
 # first and last layer when LOCAL_WINDOW > 0.
 LOCAL_WINDOW = int(os.environ.get("ACW_LOCAL_WINDOW", "0"))
+# FlexAttention path for windowed prefill. Off by default: at MAX_SEQ_LEN=1024
+# the compiled sliding-window kernel is slower than the optimized causal SDPA
+# we would otherwise use. Worth re-enabling once MAX_SEQ_LEN gets large
+# enough that the sparsity payoff dominates the kernel constant factor.
+USE_FLEX_ATTENTION = os.environ.get("ACW_USE_FLEX_ATTENTION", "0") == "1"
 
 
 def _parse_full_layer_indices() -> set[int]:
@@ -84,6 +89,48 @@ def _windowed_causal_mask(t: int, window: int, device: torch.device) -> torch.Te
     return (j <= i) & (j > i - window)
 
 
+# FlexAttention path for windowed prefill. Lazy-imported so the module loads
+# even if torch was built without it. Compiled on first use.
+_flex_attention_fn = None
+_flex_block_mask_cache: dict[tuple[int, int], "object"] = {}
+
+
+def _flex_sliding_block_mask(window: int, t: int, device: torch.device):
+    from torch.nn.attention.flex_attention import create_block_mask
+
+    key = (window, t)
+    cached = _flex_block_mask_cache.get(key)
+    if cached is not None:
+        return cached
+
+    def mask_mod(b, h, q_idx, kv_idx):  # noqa: ARG001
+        return (q_idx >= kv_idx) & (q_idx - kv_idx < window)
+
+    block_mask = create_block_mask(
+        mask_mod, B=None, H=None, Q_LEN=t, KV_LEN=t, device=str(device)
+    )
+    _flex_block_mask_cache[key] = block_mask
+    return block_mask
+
+
+def _flex_windowed_attention(
+    q: torch.Tensor, k: torch.Tensor, v: torch.Tensor, window: int
+) -> torch.Tensor:
+    """Compiled FlexAttention with sliding-window causal mask.
+
+    Falls back to a plain mask + SDPA if FlexAttention import fails.
+    """
+    global _flex_attention_fn
+    if _flex_attention_fn is None:
+        from torch.nn.attention.flex_attention import flex_attention
+
+        _flex_attention_fn = torch.compile(flex_attention, dynamic=True)
+
+    t = q.size(2)
+    block_mask = _flex_sliding_block_mask(window, t, q.device)
+    return _flex_attention_fn(q, k, v, block_mask=block_mask)
+
+
 class CausalSelfAttention(nn.Module):
     def __init__(self, dim: int, heads: int, window_size: int | None = None):
         super().__init__()
@@ -107,8 +154,11 @@ class CausalSelfAttention(nn.Module):
                 return F.scaled_dot_product_attention(q, k, v, is_causal=True)
             # extend path: one query against past + self, no further mask.
             return F.scaled_dot_product_attention(q, k, v, is_causal=False)
-        # Windowed: queries at positions [t_kv - t_q .. t_kv - 1] each attend
-        # to keys at positions [max(0, qpos - W + 1) .. qpos].
+        # Windowed prefill. With ACW_USE_FLEX_ATTENTION=1 use FlexAttention's
+        # compiled sliding-window kernel; otherwise (default) build the mask
+        # manually and call SDPA. See USE_FLEX_ATTENTION docs above.
+        if USE_FLEX_ATTENTION and t_q == t_kv and t_q > 1:
+            return _flex_windowed_attention(q, k, v, self.window_size)
         device = q.device
         i = torch.arange(t_kv - t_q, t_kv, device=device).unsqueeze(1)  # (t_q, 1)
         j = torch.arange(t_kv, device=device).unsqueeze(0)  # (1, t_kv)
