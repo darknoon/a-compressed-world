@@ -1,0 +1,13 @@
+{
+  "log": "records/20260506-204038-paris-nncp.log",
+  "bpb": 5.477447,
+  "training_seconds": 1500.566736,
+  "peak_vram_mb": 256.516113,
+  "total_tokens_M": 1.117659,
+  "num_steps": 4365,
+  "num_params_M": 3.483136,
+  "depth": 4,
+  "dim": 256,
+  "heads": 8,
+  "description": "nncp paris 25min: depth=4 dim=256 heads=8, train_every=256, slide=768, time-limited to 1.12M of 51.8M bytes (2.2%)"
+}
