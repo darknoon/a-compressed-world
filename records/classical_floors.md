@@ -26,3 +26,19 @@ streams in `data/processed*/monaco_pmtiles/`.
 
 Paris compresses about 0.86 bpb better than Monaco under xz — there is
 more cross-tile redundancy when 434 tiles are concatenated than 37.
+
+## england (data/processed_england/monaco_pmtiles/data.bin, 3,285,573,784 bytes)
+
+| Method | Compressed bytes | bpb |
+| --- | ---: | ---: |
+| gzip -9 | 1,987,288,510 | 4.839 |
+| bzip2 -9 | 1,864,748,310 | 4.541 |
+| zstd -19 | 1,820,005,651 | 4.432 |
+| **xz -9 (LZMA)** | **1,670,990,528** | **4.069** |
+
+England's classical floors are looser than Paris's (xz 4.07 vs 3.75)
+because the dataset spans heterogeneous landscapes (urban + rural +
+coast + uplands) rather than a single dense city — less repeated
+cross-tile structure for LZMA to chew on. Still tighter than Monaco's
+xz 4.61, since 876 K tiles still amortise the schema strings better
+than 37 do.
